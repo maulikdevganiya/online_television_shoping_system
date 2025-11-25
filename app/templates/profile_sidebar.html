@@ -1,0 +1,42 @@
+{%load static %}
+<aside class="w-1/4 bg-white rounded shadow">
+  <div class="flex items-center gap-3 px-4 py-4 bg-indigo-100">
+    <div class="bg-white p-2 rounded-full">
+      <i class="fa-solid fa-user text-indigo-600"></i>
+    </div>
+    <p class="font-bold">{{ user.name }}</p>
+  </div>
+
+  <nav class="flex flex-col px-4 py-2 space-y-4 text-gray-700">
+    <a
+      href="{%url 'profile'%}"
+      class="flex items-center border-b py-4 gap-2 font-semibold {% if active_page == 'profile' %} text-indigo-600 {% else %} text-gray-700 hover:text-indigo-600 {% endif %}"
+    >
+      <i class="fa-solid fa-user"></i> My Profile
+    </a>
+    <a
+      href="{%url 'my_order'%}"
+      class="flex items-center border-b py-4 gap-2 {% if active_page == 'order' %} text-indigo-600 font-semibold {% else %} text-gray-700 hover:text-indigo-600 {% endif %}"
+    >
+      <i class="fa-solid fa-box"></i> My Order
+    </a>
+    <a
+      href="{%url 'my_addrerss'%}"
+      class="flex items-center border-b py-4 gap-2 {% if active_page == 'address' %} text-indigo-600 font-semibold {% else %} text-gray-700 hover:text-indigo-600 {% endif %}"
+    >
+      <i class="fa-solid fa-location-dot"></i> Delivery Addresses
+    </a>
+    <a
+      href="{%url 'my_wishlist'%}"
+      class="flex items-center border-b py-4 gap-2 {% if active_page == 'wishlist' %} text-indigo-600 font-semibold {% else %} text-gray-700 hover:text-indigo-600 {% endif %}"
+    >
+      <i class="fa-solid fa-heart"></i> My Wishlist
+    </a>
+    <a
+      href="{% url 'logout' %}"
+      class="flex items-center border-b py-4 gap-2 hover:text-indigo-600"
+    >
+      <i class="fa-solid fa-power-off"></i> Log Out
+    </a>
+  </nav>
+</aside>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeleMart | Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-100">
+    <!-- HEADER -->
+    <header class="sticky bg-white  z-40 top-0">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center  justify-between h-16">
+                <h1 class="text-2xl font-bold text-indigo-600">TeleMart</h1>
+
+                <div class="hidden md:flex max-w-lg mx-8">
+                    <div class="relative w-full">
+                        <input type="text"
+                            class="max-w-4xl border w-96 px-4 py-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                            placeholder="Search products..." id="">
+                        <button class="absolute right-2 top-2 text-gray-400 hover:text-indigo-600"><i
+                                class="fas fa-search"></i></button>
+                    </div>
+                </div>
+
+                <div class="flex  items-center space-x-4">
+                    <button class="text-gray-600 hover:text-indigo-600 transition">
+                        <i class="fas fa-user text-xl"></i>
+                    </button>
+                    <button class="text-gray-600 hover:text-indigo-600 transition">
+                        <i class="fas fa-heart text-xl"></i>
+                    </button>
+                    <button class="relative text-gray-600 hover:text-indigo-600 transition">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        <span
+                            class="absolute -top-2 -right-2 bg-red-500 rounded-full h-5 w-5 text-white text-xs flex items-center justify-center">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex border-b border-t">
+                <ul class="flex space-x-8 py-4">
+                    <li><a href="#" class="hover:text-indigo-600 font-medium text-gray-500">All Product</a></li>
+                    <li><a href="#" class="hover:text-indigo-600 font-medium text-gray-500">About us</a></li>
+                    <li><a href="#" class="hover:text-indigo-600 font-medium text-gray-500">Contact us</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="flex justify-between border-b h-[4rem] bg-white  px-64 ">
+        <div class="flex">
+            <img src="sumsung-logo.jpeg" class="cursor-pointer border-gray-200 rounded-full " alt="">
+            <!-- <p class="text-xs">Samsung</p> -->
+        </div>
+        <img src="lg-logo.jpeg" class="cursor-pointer border-gray-200 rounded-full " alt="">
+        <img src="sony-logo.jpeg" class="cursor-pointer border-gray-200 rounded-full " alt="">
+        <img src="mi-logo.jpeg" class="cursor-pointer border-gray-200 rounded-full " alt="">
+        <img src="tcl-logo.jpeg" class="cursor-pointer border-gray-200 rounded-full " alt="">
+        <img src="bpl-logo.jpeg" class="cursor-pointer border-gray-200 rounded-full " alt="">
+        <img src="toshiba-logo.jpeg" class="cursor-pointer border-gray-200 rounded-full " alt="">
+        <img src="haier-logo.jpeg" class="cursor-pointer border-gray-200 rounded-full " alt="">
+    </div>
+
+
+    <div class="flex mx-40 my-4 flex-col">
+        <div class="font-bold  text-2xl">
+            <h2>My Cart</h2>
+        </div>
+        <div class="flex-1">
+            <!-- items section -->
+            <div class="bg-white">
+                <div class="flex">
+                    <div class="flex">
+                        <img src="product1.jpeg" alt="">
+                        <div>
+                            <a href="">-</a><p>1</p><a href="">+</a>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <a href="">Samsung 108 cm (43 inches) Crystal 4K Ultra HD Smart LED TV,</a>
+                        <p><span>₹32,230.00</span><span>24% OFF</span></p>
+                        <p>MRP<span>₹42,310.00</span></p>
+                        <a href="">Remove</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- checkout -->
+            <div class="flex bg-white">
+                <div>
+                    <h3>Payment Summary</h3>
+                </div>
+                <div class="flex justify-between border-b">
+                    <p>Price (3 items)</p>
+                    <p>₹1,41,300</p>
+                </div>
+                <div>
+                    <p>Discount</p>
+                    <p>-₹71,080</p>
+                </div>
+                <div>
+                    <p>Delivery Charges</p>
+                    <p>₹0</p>
+                </div>
+                <div>
+                    <p>Total</p>
+                    <p>₹70,220</p>
+                </div>
+                <div>
+                    <p>₹70,220</p>
+                    <a href="">Checkout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

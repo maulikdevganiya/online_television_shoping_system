@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeleMart | Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-100">
+    <!-- HEADER -->
+    {%include 'header.html'%}
+
+    <div class="flex justify-between border-b  bg-white  px-64 ">
+        <div class="flex">
+            <img src="sumsung-logo.jpeg" class="cursor-pointer border-gray-200 rounded-full " alt="">
+            <!-- <p class="text-xs">Samsung</p> -->
+        </div>
+        <img src="lg-logo.jpeg" class="cursor-pointer border-gray-200 rounded-full " alt="">
+        <img src="sony-logo.jpeg" class="cursor-pointer border-gray-200 rounded-full " alt="">
+        <img src="mi-logo.jpeg" class="cursor-pointer border-gray-200 rounded-full " alt="">
+        <img src="tcl-logo.jpeg" class="cursor-pointer border-gray-200 rounded-full " alt="">
+        <img src="bpl-logo.jpeg" class="cursor-pointer border-gray-200 rounded-full " alt="">
+        <img src="toshiba-logo.jpeg" class="cursor-pointer border-gray-200 rounded-full " alt="">
+        <img src="haier-logo.jpeg" class="cursor-pointer border-gray-200 rounded-full " alt="">
+    </div>
+
+
+    <div class="mx-10">
+        <div class="py-4">
+            <p><span class="font-bold text-xs text-[#000093] hover:text-indigo-600 cursor-pointer ">Home Page</span>
+                <span class="text-sm text-gray-400">></span><span class="ml-1 font-bold text-xs text-gray-600">Samsung
+                    TV</span>
+            </p>
+        </div>
+
+        <div class="flex pb-4">
+            <!-- filter section -->
+            <div class="flex p-1 w-[20rem] flex-col  bg-white">
+                <div class="flex py-3 px-2 font-bold bg-[#e7ebf8] justify-between">
+                    <h2 class="text-[1.1rem]">Filters</h2>
+                    <p class="text-xs text-indigo-600 pr-2 cursor-pointer">Clear All</p>
+                </div>
+                <!-- price -->
+
+                <div class="mb-6 px-4">
+                    <h3 class="text-lg font-semibold mb-2">Price Range</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>Below ₹25000</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>₹25,000 - ₹50000</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>Above ₹50000</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- screen size -->
+                <div class="mb-6 px-4">
+                    <h3 class="text-lg font-semibold mb-2">Screen size</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>32 inch</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>43 inch</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>55 inch</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>65 inch</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- display type -->
+                <div class="mb-6 px-4">
+                    <h3 class="text-lg font-semibold mb-2">Display Type</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>Ultra HD (4k)</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>Full HD</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>OLED</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>HD</span>
+                        </label>
+                    </div>
+                </div>
+
+
+
+                <!-- colour -->
+                <div class="mb-6 px-4">
+                    <h3 class="text-lg font-semibold mb-2">Colour</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>Black</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>Carbon Silver</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>Titan black</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>Titan Gray</span>
+                        </label>
+                    </div>
+                </div>
+
+
+                <!-- Refresh Rate -->
+                <div class="mb-6 px-4">
+                    <h3 class="text-lg font-semibold mb-2">Refresh Rate</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>50 Hz</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>100 Hz</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>60 Hz</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>120 Hz</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>144 Hz</span>
+                        </label>
+                    </div>
+                </div>
+
+
+                <!-- Display technology -->
+                <div class="mb-6 px-4">
+                    <h3 class="text-lg font-semibold mb-2">Display Technology</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>QLED</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span>OLED</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- product section -->
+            <div class="flex-1 px-4 ">
+                <!-- title & shorting -->
+                <div class="flex justify-between">
+                    <div class="flex justify-center items-center">
+                        <h2 class="font-bold">Samsung TV</h2>
+                    </div>
+                    <div>
+                        <div class="flex justify-end pb-2 items-center ">
+                            <button id="openSort"
+                                class="bg-white border-2 border-gray-300 text-gray-500 px-4 py-1 rounded-full font-semibold  transition">
+                                <i class="fa-solid fa-sort pr-2"></i>Sort
+                            </button>
+                        </div>
+
+                        <!-- Overlay (hidden by default) -->
+                        <div id="overlay"
+                            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+
+                            <!-- Popup Box -->
+                            <div class="bg-white rounded-xl shadow-xl w-80 p-6">
+                                <h2 class="text-xl font-bold mb-4 text-center text-indigo-600">Sort Products</h2>
+
+                                <form class="flex flex-col space-y-3">
+                                    <label class="flex items-center space-x-2">
+                                        <input type="radio" name="sort" value="default" class="text-indigo-600">
+                                        <span>Default</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="radio" name="sort" value="price-low-high" class="text-indigo-600">
+                                        <span>Price: Low to High</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="radio" name="sort" value="price-high-low" class="text-indigo-600">
+                                        <span>Price: High to Low</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="radio" name="sort" value="newest" class="text-indigo-600">
+                                        <span>Newest Arrivals</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="radio" name="sort" value="popular" class="text-indigo-600">
+                                        <span>Most Popular</span>
+                                    </label>
+                                </form>
+
+                                <div class="flex justify-between mt-6">
+                                    <button id="closeSort"
+                                        class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition">
+                                        Cancel
+                                    </button>
+                                    <button
+                                        class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+                                        Apply
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- products -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- product1 -->
+                    <div class="bg-white p-4 rounded shadow">
+                        <img src="tv-prosuct1.jpeg" alt="Samsung 50Q60C" class="mb-4 rounded">
+                        <h4 class="text-sm text-gray-800 font-semibold mb-2">Samsung 50" QLED Smart TV (4K), Black,
+                            50Q60C</h4>
+                        <p class="text-lg font-bold">₹58,040.00 <span class="text-xs text-[#00b259]">(7.5% Off)</span>
+                        </p>
+                        <p class="text-xs text-gray-500 line-through">MRP ₹62,690</p>
+                    </div>
+
+                    <!-- product2 -->
+                    <div class="bg-white p-4 rounded shadow">
+                        <img src="tv-prosuct2.jpeg" alt="Samsung 50Q60C" class="mb-4 rounded">
+                        <h4 class="text-sm text-gray-800 font-semibold mb-2">Samsung 50" QLED Smart TV (4K), Black,
+                            50Q60C</h4>
+                        <p class="text-lg font-bold">₹58,040.00 <span class="text-xs text-[#00b259]">(7.5% Off)</span>
+                        </p>
+                        <p class="text-xs text-gray-500 line-through">MRP ₹62,690</p>
+                    </div>
+
+
+                    <!-- product3 -->
+                    <div class="bg-white p-4 rounded shadow">
+                        <img src="tv-prosuct3.jpeg" alt="Samsung 50Q60C" class="mb-4 rounded">
+                        <h4 class="text-sm text-gray-800 font-semibold mb-2">Samsung 50" QLED Smart TV (4K), Black,
+                            50Q60C</h4>
+                        <p class="text-lg font-bold">₹58,040.00 <span class="text-xs text-[#00b259]">(7.5% Off)</span>
+                        </p>
+                        <p class="text-xs text-gray-500 line-through">MRP ₹62,690</p>
+                    </div>
+
+
+                    <!-- product4 -->
+                    <div class="bg-white p-4 rounded shadow">
+                        <img src="tv-prosuct5.jpeg" alt="Samsung 50Q60C" class="mb-4 rounded">
+                        <h4 class="text-sm text-gray-800 font-semibold mb-2">Samsung 50" QLED Smart TV (4K), Black,
+                            50Q60C</h4>
+                        <p class="text-lg font-bold">₹58,040.00 <span class="text-xs text-[#00b259]">(7.5% Off)</span>
+                        </p>
+                        <p class="text-xs text-gray-500 line-through">MRP ₹62,690</p>
+                    </div>
+
+
+                    <!-- product5 -->
+                    <div class="bg-white p-4 rounded shadow">
+                        <img src="tv-prosuct3.jpeg" alt="Samsung 50Q60C" class="mb-4 rounded">
+                        <h4 class="text-sm text-gray-800 font-semibold mb-2">Samsung 50" QLED Smart TV (4K), Black,
+                            50Q60C</h4>
+                        <p class="text-lg font-bold">₹58,040.00 <span class="text-xs text-[#00b259]">(7.5% Off)</span>
+                        </p>
+                        <p class="text-xs text-gray-500 line-through">MRP ₹62,690</p>
+                    </div>
+
+
+                    <!-- product6 -->
+                    <div class="bg-white p-4 rounded shadow">
+                        <img src="tv-prosuct1.jpeg" alt="Samsung 50Q60C" class="mb-4 rounded">
+                        <h4 class="text-sm text-gray-800 font-semibold mb-2">Samsung 50" QLED Smart TV (4K), Black,
+                            50Q60C</h4>
+                        <p class="text-lg font-bold">₹58,040.00 <span class="text-xs text-[#00b259]">(7.5% Off)</span>
+                        </p>
+                        <p class="text-xs text-gray-500 line-through">MRP ₹62,690</p>
+                    </div>
+
+
+                    <!-- product7 -->
+                    <div class="bg-white p-4 rounded shadow">
+                        <img src="tv-prosuct1.jpeg" alt="Samsung 50Q60C" class="mb-4 rounded">
+                        <h4 class="text-sm text-gray-800 font-semibold mb-2">Samsung 50" QLED Smart TV (4K), Black,
+                            50Q60C</h4>
+                        <p class="text-lg font-bold">₹58,040.00 <span class="text-xs text-[#00b259]">(7.5% Off)</span>
+                        </p>
+                        <p class="text-xs text-gray-500 line-through">MRP ₹62,690</p>
+                    </div>
+
+
+                    <!-- product8 -->
+                    <div class="bg-white p-4 rounded shadow">
+                        <img src="tv-prosuct1.jpeg" alt="Samsung 50Q60C" class="mb-4 rounded">
+                        <h4 class="text-sm text-gray-800 font-semibold mb-2">Samsung 50" QLED Smart TV (4K), Black,
+                            50Q60C</h4>
+                        <p class="text-lg font-bold">₹58,040.00 <span class="text-xs text-[#00b259]">(7.5% Off)</span>
+                        </p>
+                        <p class="text-xs text-gray-500 line-through">MRP ₹62,690</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="flex flex-col py-8 bg-white">
+        <div class="flex px-20 pb-6 justify-between  ">
+            <!-- about us -->
+            <div>
+                <h2 class="font-blod text-2xl pb-2">About Us</h2>
+                <p class="w-[15rem] text-gray-800 ">We're your trusted TV experts, providing quality TeleVision
+                    solutions for over 20 years.</p>
+            </div>
+
+            <!-- contact -->
+            <div>
+                <h2 class="font-blod text-2xl pb-2">Contact</h2>
+                <p class="text-gray-800">Email: info@TVshop.com</p>
+                <p class="text-gray-800">Phone: (123) 456-7890</p>
+                <p class="text-gray-800">Address: 123 Cool St, Chillville, TV 12345</p>
+            </div>
+            <!-- quick links -->
+            <div class="flex flex-col">
+                <h2 class="font-blod text-2xl pb-2">Quick Links</h2>
+                <a href="" class="hover:text-indigo-600 text-gray-800">Services</a>
+                <a href="" class="hover:text-indigo-600 text-gray-800">Products</a>
+                <a href="" class="hover:text-indigo-600 text-gray-800">FAQs</a>
+            </div>
+            <!-- follows us -->
+            <div>
+                <h2 class="font-blod text-2xl pb-2">Follow Us</h2>
+                <div class="flex space-x-4">
+                    <a href="" class="text-2xl hover:text-indigo-600"><i class="fab fa-facebook fs-4"></i></a>
+                    <a href="" class="text-2xl hover:text-indigo-600"><i class="fab fa-twitter fs-4"></i></a>
+                    <a href="" class="text-2xl hover:text-indigo-600"><i class="fab fa-instagram fs-4"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- copyright section -->
+        <div class="flex justify-center item-center border-t py-4">
+            <p class="text-gray-800">© 2025 TeleMart Shop. All rights reserved.</p>
+        </div>
+    </section>
+
+</body>
+<script>
+    const openSort = document.getElementById("openSort");
+    const closeSort = document.getElementById("closeSort");
+    const overlay = document.getElementById("overlay");
+
+    openSort.addEventListener("click", () => {
+        overlay.classList.remove("hidden");
+        document.body.classList.add("overflow-hidden"); // disable scrolling
+    });
+
+    closeSort.addEventListener("click", () => {
+        overlay.classList.add("hidden");
+        document.body.classList.remove("overflow-hidden"); // enable scrolling
+    });
+
+    // Close popup when clicking outside the box
+    overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) {
+            overlay.classList.add("hidden");
+            document.body.classList.remove("overflow-hidden");
+        }
+    });
+</script>
+
+</html>

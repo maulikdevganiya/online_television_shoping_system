@@ -1,0 +1,77 @@
+{%load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+
+  <body class="bg-gray-100">
+    <!-- Header -->
+
+    <!-- Breadcrumb -->
+    <div class="mx-40 mt-6">
+      <p class="text-sm">
+        <span
+          class="text-[#000093] font-bold hover:text-indigo-600 cursor-pointer"
+          ><a href="{% url 'index' %}">Home Page</a></span
+        >
+        <span class="text-gray-400 mx-1">></span>
+        <span class="text-gray-600 font-bold">My Account</span>
+      </p>
+    </div>
+
+    <!-- Main Section -->
+    <div class="mx-40 mt-4 flex gap-6">
+      <!-- Sidebar -->
+      {%include 'profile_sidebar.html'%}
+      <!-- Profile Content -->
+      <div class="flex-1 flex-col">
+        <div class="font-bold my-4 text-2xl">
+          <h2>My Profile</h2>
+        </div>
+        <section class="flex-1 bg-white rounded shadow p-1">
+          <div
+            class="flex px-4 bg-gray-100 h-16 justify-between items-center mb-4"
+          >
+            <h2 class="text-xl font-semibold">Personal Details</h2>
+            <a href="#" class="text-indigo-600 hover:underline">Edit Profile</a>
+          </div>
+
+          <div class="grid px-4 pb-4 grid-cols-2 gap-6">
+            <div>
+              <label class="text-sm text-gray-500">First Name</label>
+              <p class="font-medium">{{ user.name }}</p>
+            </div>
+            <div>
+              <label class="text-sm text-gray-500">Last Name</label>
+              <p class="font-medium">Devganiya</p>
+            </div>
+            <div>
+              <label class="text-sm text-gray-500">Date Of Birth</label>
+              <p class="font-medium">DD/MM/YYYY</p>
+            </div>
+            <div>
+              <label class="text-sm text-gray-500">Gender</label>
+              <p class="font-medium text-gray-400">Not specified</p>
+            </div>
+            <div>
+              <label class="text-sm text-gray-500">Email Address</label>
+              <p class="font-medium">{{ user.email }}</p>
+            </div>
+            <div>
+              <label class="text-sm text-gray-500">Mobile Number</label>
+              <p class="font-medium">6353531011</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </body>
+</html>

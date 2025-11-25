@@ -1,0 +1,87 @@
+{%load static%}
+
+{%include 'header.html'%}
+    <!-- LOGIN CONTAINER -->
+    <div class="flex justify-center p-10 bg-gray-100">
+      <div
+        class="bg-white rounded-xl shadow-2xl flex w-[80%] max-w-5xl h-[600px] overflow-hidden"
+      >
+        <!-- LEFT SIDE (Image) -->
+        <div class="w-1/2 hidden md:block">
+          <img
+            src="{% static 'images/logintv.png' %}"
+            alt="Login"
+            class="object-cover w-full h-full"
+          />
+        </div>
+
+        <!-- RIGHT SIDE (Form) -->
+        <div class="w-full md:w-1/2 p-10 flex flex-col justify-center">
+          <h2 class="text-3xl font-bold mb-6 text-center">Welcome Back</h2>
+          <p class="text-gray-600 text-center mb-8">
+            Login to your TeleMart account
+          </p>
+
+          <form action="{% url 'login' %}" method="POST" class="space-y-5">
+            {% csrf_token %} {% if messages %} {% for message in messages %}
+            <div
+              class="px-4 py-2 mb-2 text-white rounded {% if message.tags == 'error' %} bg-red-500 {% elif message.tags == 'success' %} bg-green-500 {% endif %}"
+            >
+              {{ message }}
+            </div>
+            {% endfor %} {% endif %}
+            <div>
+              <label for="email" class="block font-medium mb-1"
+                >Email Address</label
+              >
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-indigo-500"
+                placeholder="you@example.com"
+              />
+            </div>
+
+            <div>
+              <label for="password" class="block font-medium mb-1">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-indigo-500"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
+            <div class="flex justify-between items-center text-sm">
+              <label class="flex items-center space-x-2">
+                <input type="checkbox" class="accent-indigo-600" />
+                <span>Remember me</span>
+              </label>
+              <a href="#" class="text-indigo-600 hover:underline"
+                >Forgot Password?</a
+              >
+            </div>
+
+            <button
+              type="submit"
+              class="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition">
+              Login
+            </button>
+          </form>
+
+          <p class="mt-6 text-center text-gray-600">
+            Don't have an account?
+            <a
+              href="{% url 'registration'  %}"
+              class="text-indigo-600 font-semibold hover:underline"
+              >Sign Up</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

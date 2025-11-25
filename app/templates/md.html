@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TeleMart | My Cart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        /* Custom Scrollbar */
+        .scrollbar-custom::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-thumb {
+            background: #cdcccc;
+            border-radius: 10px;
+        }
+
+        .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+            background: #b9b9b9;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <!-- HEADER -->
+    <header class="sticky bg-white z-40 top-0 shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <h1 class="text-2xl font-bold text-indigo-600">TeleMart</h1>
+
+                <!-- Search -->
+                <div class="hidden md:flex max-w-lg mx-8">
+                    <div class="relative w-full">
+                        <input type="text"
+                            class="w-96 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                            placeholder="Search products..." />
+                        <button class="absolute right-2 top-2 text-gray-400 hover:text-indigo-600">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Icons -->
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-600 hover:text-indigo-600 transition">
+                        <i class="fas fa-user text-xl"></i>
+                    </button>
+                    <button class="text-gray-600 hover:text-indigo-600 transition">
+                        <i class="fas fa-heart text-xl"></i>
+                    </button>
+                    <button class="relative text-gray-600 hover:text-indigo-600 transition">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        <span
+                            class="absolute -top-2 -right-2 bg-red-500 rounded-full h-5 w-5 text-white text-xs flex items-center justify-center">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- BRAND LOGOS -->
+    <div class="flex justify-between border-b h-[4rem] bg-white px-64">
+        <img src="sumsung-logo.jpeg" class="cursor-pointer rounded-full" alt="">
+        <img src="lg-logo.jpeg" class="cursor-pointer rounded-full" alt="">
+        <img src="sony-logo.jpeg" class="cursor-pointer rounded-full" alt="">
+        <img src="mi-logo.jpeg" class="cursor-pointer rounded-full" alt="">
+        <img src="tcl-logo.jpeg" class="cursor-pointer rounded-full" alt="">
+        <img src="bpl-logo.jpeg" class="cursor-pointer rounded-full" alt="">
+        <img src="toshiba-logo.jpeg" class="cursor-pointer rounded-full" alt="">
+        <img src="haier-logo.jpeg" class="cursor-pointer rounded-full" alt="">
+    </div>
+
+    <h2 class="text-2xl mx-10 pl-12 font-bold my-6">My Cart</h2>
+
+    <!-- CART SECTION -->
+    <main class="flex mx-20 gap-6 my-6">
+        <!-- Cart Items (75%) -->
+        <div class="w-3/4 scrollbar-custom max-h-[70vh] overflow-y-auto space-y-6">
+            <!-- Item 1 -->
+            <div class="bg-white p-6 rounded shadow flex gap-6">
+                <div class="flex flex-col">
+                    <img src="product1.jpeg" class="h-24 w-24 object-cover" alt="Samsung TV" />
+                    <div
+                        class="flex items-center border border-gray-300 rounded-full overflow-hidden w-fit select-none">
+                        <!-- Minus Button -->
+                        <button
+                            class="px-2 font-bold text-[1.2rem] text-gray-700 hover:bg-gray-100 transition-all duration-200">
+                            -
+                        </button>
+
+                        <!-- Quantity -->
+                        <p class="px-4 text-gray-800 font-medium">1</p>
+
+                        <!-- Plus Button -->
+                        <button
+                            class="px-2 font-bold text-[1.2rem]  text-gray-700 hover:bg-gray-100 transition-all duration-200">
+                            +
+                        </button>
+                    </div>
+                </div>
+                <div class="flex flex-col justify-between">
+                    <a href="#" class="text-lg font-semibold text-indigo-600 ">
+                        Samsung 108 cm (43 inches) Crystal 4K Ultra HD Smart LED TV
+                    </a>
+                    <p class="mt-2 text-gray-700">
+                        <span class="font-bold">₹32,230.00</span>
+                        <span class="ml-2 text-green-600 font-semibold">24% OFF</span>
+                    </p>
+                    <p class="text-sm text-gray-500">MRP <span class="line-through">₹42,310.00</span></p>
+                    <a href="#" class="text-red-500 text-sm hover:underline mt-2">Remove</a>
+                </div>
+            </div>
+            <!-- Item 1 -->
+            <div class="bg-white p-6 rounded shadow flex gap-6">
+                <div class="flex flex-col">
+                    <img src="product1.jpeg" class="h-24 w-24 object-cover" alt="Samsung TV" />
+                    <div
+                        class="flex items-center border border-gray-300 rounded-full overflow-hidden w-fit select-none">
+                        <!-- Minus Button -->
+                        <button class="px-2 font-bold text-[1.2rem]  text-gray-700 hover:bg-gray-100 transition-all duration-200">
+                            -
+                        </button>
+
+                        <!-- Quantity -->
+                        <p class="px-4 text-gray-800 font-medium">1</p>
+
+                        <!-- Plus Button -->
+                        <button class="px-2 font-bold text-[1.2rem]  text-gray-700 hover:bg-gray-100 transition-all duration-200">
+                            +
+                        </button>
+                    </div>
+                </div>
+                <div class="flex flex-col justify-between">
+                    <a href="#" class="text-lg font-semibold text-indigo-600 ">
+                        Samsung 108 cm (43 inches) Crystal 4K Ultra HD Smart LED TV
+                    </a>
+                    <p class="mt-2 text-gray-700">
+                        <span class="font-bold">₹32,230.00</span>
+                        <span class="ml-2 text-green-600 font-semibold">24% OFF</span>
+                    </p>
+                    <p class="text-sm text-gray-500">MRP <span class="line-through">₹42,310.00</span></p>
+                    <a href="#" class="text-red-500 text-sm hover:underline mt-2">Remove</a>
+                </div>
+            </div>
+
+
+            <!-- Item 3 -->
+            <div class="bg-white p-6 rounded shadow flex gap-6">
+                <div class="flex flex-col">
+                    <img src="product1.jpeg" class="h-24 w-24 object-cover" alt="Samsung TV" />
+                    <div
+                        class="flex items-center border border-gray-300 rounded-full overflow-hidden w-fit select-none">
+                        <!-- Minus Button -->
+                        <button class="px-2 font-bold text-[1.2rem]  text-gray-700 hover:bg-gray-100 transition-all duration-200">
+                            -
+                        </button>
+
+                        <!-- Quantity -->
+                        <p class="px-4 text-gray-800 font-medium">1</p>
+
+                        <!-- Plus Button -->
+                        <button class="px-2 font-bold text-[1.2rem]  text-gray-700 hover:bg-gray-100 transition-all duration-200">
+                            +
+                        </button>
+                    </div>
+                </div>
+                <div class="flex flex-col justify-between">
+                    <a href="#" class="text-lg font-semibold text-indigo-600 ">
+                        Samsung 108 cm (43 inches) Crystal 4K Ultra HD Smart LED TV
+                    </a>
+                    <p class="mt-2 text-gray-700">
+                        <span class="font-bold">₹32,230.00</span>
+                        <span class="ml-2 text-green-600 font-semibold">24% OFF</span>
+                    </p>
+                    <p class="text-sm text-gray-500">MRP <span class="line-through">₹42,310.00</span></p>
+                    <a href="#" class="text-red-500 text-sm hover:underline mt-2">Remove</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checkout Summary (25%) -->
+        <div class="w-1/4 top-24 h-[50vh] bg-white p-6 rounded shadow self-start">
+            <h3 class="text-xl font-bold mb-4">Payment Summary</h3>
+            <div class="space-y-8">
+                <div class="flex justify-between border-b pb-2">
+                    <p>Price (3 items)</p>
+                    <p>₹1,41,300</p>
+                </div>
+                <div class="flex border-b pb-2 justify-between">
+                    <p>Discount</p>
+                    <p class="text-green-600">-₹71,080</p>
+                </div>
+                <div class="flex border-b pb-2 justify-between">
+                    <p>Delivery Charges</p>
+                    <p>₹0</p>
+                </div>
+                <div class="flex justify-between pb-2 font-bold text-lg mt-2">
+                    <p>Total</p>
+                    <p>₹70,220</p>
+                </div>
+            </div>
+            <div class="mt-6 text-right">
+                <a href="#"
+                    class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 font-medium">Checkout</a>
+            </div>
+        </div>
+    </main>
+
+    <section class="flex flex-col py-8 bg-white">
+        <div class="flex px-20 pb-6 justify-between  ">
+            <!-- about us -->
+            <div>
+                <h2 class="font-blod text-2xl pb-2">About Us</h2>
+                <p class="w-[15rem] text-gray-800 ">We're your trusted TV experts, providing quality TeleVision
+                    solutions for over 20 years.</p>
+            </div>
+
+            <!-- contact -->
+            <div>
+                <h2 class="font-blod text-2xl pb-2">Contact</h2>
+                <p class="text-gray-800">Email: info@TVshop.com</p>
+                <p class="text-gray-800">Phone: (123) 456-7890</p>
+                <p class="text-gray-800">Address: 123 Cool St, Chillville, TV 12345</p>
+            </div>
+            <!-- quick links -->
+            <div class="flex flex-col">
+                <h2 class="font-blod text-2xl pb-2">Quick Links</h2>
+                <a href="" class="hover:text-indigo-600 text-gray-800">Services</a>
+                <a href="" class="hover:text-indigo-600 text-gray-800">Products</a>
+                <a href="" class="hover:text-indigo-600 text-gray-800">FAQs</a>
+            </div>
+            <!-- follows us -->
+            <div>
+                <h2 class="font-blod text-2xl pb-2">Follow Us</h2>
+                <div class="flex space-x-4">
+                    <a href="" class="text-2xl hover:text-indigo-600"><i class="fab fa-facebook fs-4"></i></a>
+                    <a href="" class="text-2xl hover:text-indigo-600"><i class="fab fa-twitter fs-4"></i></a>
+                    <a href="" class="text-2xl hover:text-indigo-600"><i class="fab fa-instagram fs-4"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- copyright section -->
+        <div class="flex justify-center item-center border-t py-4">
+            <p class="text-gray-800">© 2025 TeleMart Shop. All rights reserved.</p>
+        </div>
+    </section>
+</body>
+
+</html>

@@ -1,0 +1,43 @@
+{%load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-100">
+    
+    <!-- Breadcrumb -->
+    <div class="mx-40 mt-6">
+        <p class="text-sm">
+            <span class="text-[#000093] font-bold hover:text-indigo-600 cursor-pointer">Home Page</span>
+            <span class="text-gray-400 mx-1">></span>
+            <span class="text-gray-600 font-bold">My Order</span>
+        </p>
+    </div>
+
+    <!-- Main Section -->
+    <div class="mx-40 mt-4 flex gap-6">
+        <!-- Sidebar -->
+        {%include 'profile_sidebar.html'%}
+        <div class="flex-1 flex flex-col">
+            <div class="font-bold my-4 text-2xl">
+                <h2>My Order</h2>
+            </div>
+            <section class="bg-white rounded shadow p-6 flex flex-col items-center text-center">
+                <img src="emty_order.svg" class="h-40 w-40 mb-4" alt="Empty Order">
+                <p class="text-lg font-semibold mb-1">There are no current orders</p>
+                <p class="text-gray-600 mb-4">You have no orders to show</p>
+                <a href="#" class="text-white border-2 bg-[#0a2885] py-2 px-8 font-bold rounded-full font-medium ">Continue shopping</a>
+            </section>
+        </div>
+
+</body>
+
+</html>
