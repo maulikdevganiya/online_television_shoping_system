@@ -1,6 +1,16 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password
 
+
+class Admin(models.Model):
+    A_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100)
+    email = models.EmailField(max_length=255, unique=True)
+    passw = models.CharField(max_length=25)
+
+    def __str__(self):
+        return f"{self.name}"
+    
 class UserRegister(models.Model):
     name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150, blank=True, null=True)

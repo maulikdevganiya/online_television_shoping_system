@@ -1,0 +1,91 @@
+ body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* Sidebar (Consistent) */
+        .sidebar {
+            height: 100vh;
+            background-color: #2c3e50;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            padding-top: 20px;
+            z-index: 1000;
+        }
+
+        .sidebar a {
+            padding: 15px 25px;
+            text-decoration: none;
+            font-size: 16px;
+            color: #bdc3c7;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            color: white;
+            background-color: #34495e;
+            border-left: 4px solid #3498db;
+        }
+
+        .sidebar .brand {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        /* Financial Cards */
+        .fin-card {
+            border: none;
+            border-radius: 12px;
+            padding: 20px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .fin-card:hover { transform: translateY(-3px); }
+        .bg-gradient-1 { background: linear-gradient(45deg, #11998e, #38ef7d); }
+        .bg-gradient-2 { background: linear-gradient(45deg, #3a7bd5, #00d2ff); }
+        .bg-gradient-3 { background: linear-gradient(45deg, #FF512F, #DD2476); }
+        .bg-gradient-4 { background: linear-gradient(45deg, #f09819, #edde5d); }
+
+        .fin-card h3 { font-weight: 800; margin-top: 10px; }
+        .fin-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 3rem;
+            opacity: 0.2;
+        }
+
+        /* Payment Icons */
+        .pay-icon { font-size: 1.5rem; margin-right: 8px; }
+        .fa-cc-visa { color: #1a1f71; }
+        .fa-cc-mastercard { color: #eb001b; }
+        .fa-cc-paypal { color: #003087; }
+        .fa-cc-amex { color: #2e77bc; }
+
+        /* Status Pills */
+        .status-success { background: #d1e7dd; color: #0f5132; }
+        .status-pending { background: #fff3cd; color: #664d03; }
+        .status-failed { background: #f8d7da; color: #842029; }
+        .status-refunded { background: #e2e3e5; color: #41464b; text-decoration: line-through; }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 0; }
+            .main-content { margin-left: 0; }
+        }

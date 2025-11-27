@@ -1,0 +1,93 @@
+ body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* Sidebar (Consistent) */
+        .sidebar {
+            height: 100vh;
+            background-color: #2c3e50;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            padding-top: 20px;
+            z-index: 1000;
+        }
+
+        .sidebar a {
+            padding: 15px 25px;
+            text-decoration: none;
+            font-size: 16px;
+            color: #bdc3c7;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            color: white;
+            background-color: #34495e;
+            border-left: 4px solid #3498db;
+        }
+
+        .sidebar .brand {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            border: none;
+            border-radius: 10px;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        /* Table Styling */
+        .table-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+        }
+
+        .avatar-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+
+        /* Status Badges */
+        .badge-active { background-color: #d1e7dd; color: #0f5132; }
+        .badge-blocked { background-color: #f8d7da; color: #842029; }
+        .badge-vip { background-color: #fff3cd; color: #664d03; border: 1px solid #ffecb5; }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 0; }
+            .main-content { margin-left: 0; }
+        }

@@ -1,0 +1,82 @@
+body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* Sidebar (Consistent) */
+        .sidebar {
+            height: 100vh;
+            background-color: #2c3e50;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            padding-top: 20px;
+            z-index: 1000;
+        }
+
+        .sidebar a {
+            padding: 15px 25px;
+            text-decoration: none;
+            font-size: 16px;
+            color: #bdc3c7;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            color: white;
+            background-color: #34495e;
+            border-left: 4px solid #3498db;
+        }
+
+        .sidebar .brand {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        /* Order Stats Cards */
+        .order-card {
+            border: none;
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Table Styling */
+        .table-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+        }
+
+        .status-badge {
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+            min-width: 100px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        /* Status Colors */
+        .status-pending { background-color: #ffeeba; color: #856404; }
+        .status-processing { background-color: #b8daff; color: #004085; }
+        .status-shipped { background-color: #c3e6cb; color: #155724; }
+        .status-cancelled { background-color: #f5c6cb; color: #721c24; }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 0; }
+            .main-content { margin-left: 0; }
+        }

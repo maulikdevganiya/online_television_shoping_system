@@ -1,0 +1,103 @@
+:root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            height: 100vh;
+            background-color: var(--primary-color);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            padding-top: 20px;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .sidebar a {
+            padding: 15px 25px;
+            text-decoration: none;
+            font-size: 16px;
+            color: #bdc3c7;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            color: white;
+            background-color: var(--secondary-color);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .sidebar .brand {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px; /* Same as sidebar width */
+            padding: 30px;
+        }
+
+        /* Cards */
+        .stat-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .icon-box {
+            font-size: 2.5rem;
+            opacity: 0.8;
+        }
+
+        /* Table Styling */
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .badge-brand {
+            font-size: 0.9em;
+            padding: 5px 10px;
+        }
+        .top-nav {
+    height: 70px;
+    position: sticky;
+    top: 0;
+    z-index: 900;
+}
+
+.top-nav i {
+    cursor: pointer;
+}
+
+.top-nav img {
+    border: 2px solid #2c3e50;
+}
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar { width: 0; overflow: hidden; }
+            .main-content { margin-left: 0; }
+        }

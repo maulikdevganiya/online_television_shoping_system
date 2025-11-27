@@ -1,0 +1,39 @@
+{%load static%}
+<div class="sidebar" id="sidebar">
+  <div class="brand"><i class="fas fa-tv"></i> TV Shop Admin</div>
+  <a href="{%url 'dashboard'%}" class="active"
+    ><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a
+  >
+  <a href="{%url 'product'%}"><i class="fas fa-box me-2"></i> Products</a>
+  <a href="{%url 'order'%}"><i class="fas fa-shopping-cart me-2"></i> Orders</a>
+  <a href="{%url 'customer'%}"><i class="fas fa-users me-2"></i> Customers</a>
+  <a href="{%url 'product'%}" class="mt-5"
+    ><i class="fas fa-sign-out-alt me-2"></i> Logout</a
+  >
+</div>
+<!-- Top Header Bar -->
+<nav class="top-nav d-flex justify-content-between align-items-center px-4 py-3 shadow-sm bg-white">
+    
+    <!-- Left Side: Page Title (Dynamic) -->
+    <h4 class="m-0 fw-bold" id="pageTitle">Admin Dashboard</h4>
+
+    <!-- Right Side: Admin Profile -->
+    <div class="d-flex align-items-center gap-3">
+        
+        <!-- Notification Icon -->
+        <div class="position-relative">
+            <i class="fas fa-bell fs-5 text-secondary"></i>
+            <span class="badge bg-danger position-absolute top-0 start-100 translate-middle p-1 rounded-circle"></span>
+        </div>
+
+        <!-- Admin Name -->
+        <span class="fw-semibold">{{ request.session.admin_name }}</span>
+
+        <!-- Admin Profile Image -->
+        <img src="{% static 'images/admin.png' %}" 
+             alt="Admin" 
+             class="rounded-circle border"
+             style="width:42px; height:42px; object-fit:cover;">
+    </div>
+
+</nav>
