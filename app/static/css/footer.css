@@ -1,0 +1,8 @@
+/* Footer */
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+        }
+        footer { background-color: var(--primary); color: #bdc3c7; padding-top: 60px; }
+        footer a { color: #bdc3c7; text-decoration: none; transition: 0.2s; }
+        footer a:hover { color: white; }

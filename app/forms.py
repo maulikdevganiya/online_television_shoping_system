@@ -1,6 +1,6 @@
 import re
 from django import forms
-from .models import UserRegister
+from .models import UserRegister,Carousel
 from django.core.exceptions import ValidationError
 
 
@@ -49,3 +49,8 @@ class RegisterForm(forms.ModelForm):
 
         if p1 and p2 and p1 != p2:
             self.add_error("confirm_password", "Passwords do not match!")
+
+class CarouselForm(forms.ModelForm):
+    class Meta:
+        model = Carousel
+        fields = ['c_title', 'c_link', 'sort_order', 'c_status', 'c_img']

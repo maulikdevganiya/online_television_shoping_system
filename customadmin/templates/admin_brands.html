@@ -1,313 +1,109 @@
-{%load static%}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Brands - TV Shop Admin</title>
+    <title>Brands</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet" href="{% static 'Admin/css/admin_style.css' %}" />
     
     <style>
-        body {
+            body {
             background-color: #f8f9fa;
             font-family: 'Segoe UI', sans-serif;
         }
-
-        
-        /* Main Content */
-        .main-content {
+            .main-content {
             margin-left: 250px;
             padding: 30px;
         }
-
-        /* Brand Card Styling */
-        .brand-card {
-            background: white;
-            border: none;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            overflow: hidden;
-        }
-
-        .brand-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-
-        .brand-logo-wrapper {
-            height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #f1f1f1;
-        }
-
-        .brand-logo {
-            max-height: 80px;
-            max-width: 100%;
-            object-fit: contain;
-        }
-
-        .card-actions {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            opacity: 0;
-            transition: 0.2s;
-        }
-
-        .brand-card:hover .card-actions {
-            opacity: 1;
-        }
-
-        .product-count {
-            background-color: #eef2f7;
-            color: #2c3e50;
-            font-size: 0.85rem;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-
-        /* Status Dot */
-        .status-dot {
-            height: 10px;
-            width: 10px;
-            background-color: #bbb;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 5px;
-        }
-        .status-active { background-color: #2ecc71; }
-        .status-inactive { background-color: #e74c3c; }
-
-        @media (max-width: 768px) {
-            .sidebar { width: 0; }
-            .main-content { margin-left: 0; }
-        }
     </style>
-    <link rel="stylesheet" href="{% static 'Admin/css/admin_style.css' %}" />
 </head>
+
 <body>
-    {% include "admin_sidebar.html"%} {% include "admin_header.html"%}
 
+{% include "admin_sidebar.html" %}
+{% include "admin_header.html" %}
 
-    <div class="main-content">
-        
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2 class="fw-bold">Brand Manufacturers</h2>
-                <p class="text-muted">Manage the TV brands available in your store.</p>
+<div class="main-content p-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Brand Manufacturers</h2>
+
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#brandModal">
+            <i class="fas fa-plus-circle"></i> Add Brand
+        </button>
+    </div>
+
+    <div class="row g-4">
+
+        {% for b in brands %}
+        <div class="col-md-4 col-xl-3">
+            <div class="brand-card shadow-sm p-3 bg-white rounded">
+
+                <div class="text-end">
+                    <a href="{% url 'edit_brand' b.id %}" class="btn btn-sm btn-light">
+                        <i class="fas fa-pen text-primary"></i>
+                    </a>
+                    <a onclick="return confirm('Delete this brand?')" href="{% url 'delete_brand' b.id %}" class="btn btn-sm btn-light">
+                        <i class="fas fa-trash text-danger"></i>
+                    </a>
+                </div>
+
+                <div class="brand-logo-wrapper text-center">
+                    <img src="{{ b.bimage.url }}" style="max-height:80px;">
+                </div>
+
+                <h5 class="fw-bold mt-3">{{ b.bname }}</h5>
+                <p class="text-muted small">{{ b.description }}</p>
+
+                <span class="badge {% if b.b_status == 'Active' %}bg-success{% else %}bg-danger{% endif %}">
+                    {{ b.b_status }}
+                </span>
+
             </div>
-            <button class="btn btn-primary" onclick="openBrandModal()">
-                <i class="fas fa-plus-circle me-2"></i> Add New Brand
-            </button>
         </div>
-
-        <div class="card border-0 shadow-sm mb-4 p-3">
-            <div class="input-group">
-                <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Search brands..." onkeyup="filterBrands()">
-            </div>
-        </div>
-
-        <div class="row g-4" id="brandsGrid">
-            </div>
+        {% endfor %}
 
     </div>
 
-    <div class="modal fade" id="brandModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Add New Brand</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="brandForm">
-                        <input type="hidden" id="editBrandId">
-                        
-                        <div class="mb-3 text-center">
-                            <img id="previewLogo" src="https://via.placeholder.com/150x80?text=Preview" class="img-fluid border p-2 rounded mb-2" style="height: 80px;">
-                            <div class="input-group">
-                                <input type="file" class="form-control" id="brandLogoInput" accept="image/*">
-                            </div>
-                            <small class="text-muted">Recommended size: 200x100px (PNG)</small>
-                        </div>
+</div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Brand Name</label>
-                            <input type="text" class="form-control" id="brandName" required placeholder="e.g. Samsung">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Description</label>
-                            <textarea class="form-control" id="brandDesc" rows="3" placeholder="Short description about the brand..."></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Status</label>
-                            <select class="form-select" id="brandStatus">
-                                <option value="Active">Active</option>
-                                <option value="Inactive">Inactive</option>
-                            </select>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary w-100">Save Brand</button>
-                    </form>
-                </div>
+<!-- ADD BRAND MODAL -->
+<div class="modal fade" id="brandModal">
+    <div class="modal-dialog">
+        <form class="modal-content" action="{% url 'add_brand' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Brand</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-        </div>
+
+            <div class="modal-body">
+
+                <label class="form-label">Brand Image</label>
+                <input type="file" name="bimage" class="form-control" required>
+
+                <label class="form-label mt-3">Brand Name</label>
+                <input type="text" name="bname" class="form-control" required>
+
+                <label class="form-label mt-3">Description</label>
+                <textarea name="description" class="form-control"></textarea>
+
+                <label class="form-label mt-3">Status</label>
+                <select name="status" class="form-select">
+                    <option>Active</option>
+                    <option>Inactive</option>
+                </select>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary">Save Brand</button>
+            </div>
+        </form>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        // 1. Mock Data (Brand List)
-        let brands = [
-            { id: 1, name: "Samsung", products: 45, status: "Active", desc: "South Korean multinational electronics corporation.", logo: "https://upload.wikimedia.org/wikipedia/commons/2/24/Samsung_Logo.svg" },
-            { id: 2, name: "LG Electronics", products: 32, status: "Active", desc: "Global leader in OLED technology.", logo: "https://upload.wikimedia.org/wikipedia/commons/b/bf/LG_logo_%282015%29.svg" },
-            { id: 3, name: "Sony", products: 28, status: "Active", desc: "Japanese conglomerate corporation.", logo: "https://upload.wikimedia.org/wikipedia/commons/c/c3/Sony_logo_%28white_bg%29.svg" },
-            { id: 4, name: "TCL", products: 15, status: "Active", desc: "Fast-growing consumer electronics brand.", logo: "https://upload.wikimedia.org/wikipedia/commons/b/b5/TCL_Technology_logo.svg" },
-            { id: 5, name: "Hisense", products: 10, status: "Inactive", desc: "Chinese multinational white goods and electronics.", logo: "https://upload.wikimedia.org/wikipedia/commons/3/3e/Hisense_Logo_2012.svg" },
-            { id: 6, name: "Panasonic", products: 5, status: "Active", desc: "Worldwide leader in the development of electronics.", logo: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Panasonic_logo.svg" },
-        ];
-
-        // 2. Render Brands Function
-        const grid = document.getElementById('brandsGrid');
-
-        function renderBrands(data) {
-            grid.innerHTML = "";
-            
-            data.forEach(brand => {
-                let statusClass = brand.status === 'Active' ? 'status-active' : 'status-inactive';
-                let cardOpacity = brand.status === 'Inactive' ? 'opacity: 0.7;' : '';
-
-                let card = `
-                    <div class="col-md-4 col-xl-3" style="${cardOpacity}">
-                        <div class="brand-card">
-                            <div class="card-actions">
-                                <button class="btn btn-sm btn-light shadow-sm" onclick="editBrand(${brand.id})"><i class="fas fa-pen text-primary"></i></button>
-                                <button class="btn btn-sm btn-light shadow-sm" onclick="deleteBrand(${brand.id})"><i class="fas fa-trash text-danger"></i></button>
-                            </div>
-                            
-                            <div class="brand-logo-wrapper">
-                                <img src="${brand.logo}" class="brand-logo" alt="${brand.name}">
-                            </div>
-                            
-                            <h5 class="fw-bold mb-1">${brand.name}</h5>
-                            <div class="text-muted small mb-3 text-truncate">${brand.desc}</div>
-                            
-                            <div class="product-count">
-                                <i class="fas fa-tv me-1"></i> ${brand.products} Products
-                            </div>
-
-                            <div class="mt-2 small text-muted">
-                                <span class="status-dot ${statusClass}"></span> ${brand.status}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                grid.innerHTML += card;
-            });
-        }
-
-        // 3. Initial Load
-        renderBrands(brands);
-
-        // 4. Modal Logic (Add & Edit)
-        const modalEl = document.getElementById('brandModal');
-        const modal = new bootstrap.Modal(modalEl);
-
-        function openBrandModal() {
-            document.getElementById('brandForm').reset();
-            document.getElementById('editBrandId').value = "";
-            document.getElementById('modalTitle').innerText = "Add New Brand";
-            document.getElementById('previewLogo').src = "https://via.placeholder.com/150x80?text=Preview";
-            modal.show();
-        }
-
-        function editBrand(id) {
-            const b = brands.find(x => x.id === id);
-            document.getElementById('editBrandId').value = b.id;
-            document.getElementById('brandName').value = b.name;
-            document.getElementById('brandDesc').value = b.desc;
-            document.getElementById('brandStatus').value = b.status;
-            document.getElementById('previewLogo').src = b.logo;
-            
-            document.getElementById('modalTitle').innerText = "Edit Brand";
-            modal.show();
-        }
-
-        // 5. Handle Form Submit
-        document.getElementById('brandForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const id = document.getElementById('editBrandId').value;
-            const name = document.getElementById('brandName').value;
-            const desc = document.getElementById('brandDesc').value;
-            const status = document.getElementById('brandStatus').value;
-            
-            // For demo, we just keep the preview logo or a placeholder
-            // In real app, you would handle file upload here
-            const logo = document.getElementById('previewLogo').src;
-
-            if(id) {
-                // Edit Existing
-                const index = brands.findIndex(x => x.id == id);
-                brands[index].name = name;
-                brands[index].desc = desc;
-                brands[index].status = status;
-            } else {
-                // Add New
-                brands.push({
-                    id: Date.now(),
-                    name: name,
-                    products: 0,
-                    status: status,
-                    desc: desc,
-                    logo: "https://via.placeholder.com/150x80?text=" + name
-                });
-            }
-            
-            modal.hide();
-            renderBrands(brands);
-        });
-
-        // 6. Delete Logic
-        function deleteBrand(id) {
-            if(confirm("Are you sure? This will hide products associated with this brand.")) {
-                brands = brands.filter(b => b.id !== id);
-                renderBrands(brands);
-            }
-        }
-
-        // 7. Search/Filter Logic
-        function filterBrands() {
-            const val = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = brands.filter(b => b.name.toLowerCase().includes(val));
-            renderBrands(filtered);
-        }
-
-        // Optional: Simple Logo Preview Handler
-        document.getElementById('brandLogoInput').addEventListener('change', function(e) {
-            if (e.target.files && e.target.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('previewLogo').src = e.target.result;
-                }
-                reader.readAsDataURL(e.target.files[0]);
-            }
-        });
-
-    </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

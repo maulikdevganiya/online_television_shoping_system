@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+{% load static %}
+
+  {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - TeleMart Shop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            color: #333;
+        }
+
+
+        /* Hero Section */
+        .about-hero {
+            background: linear-gradient(rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.8)), url('https://via.placeholder.com/1920x600?text=TV+Shop+Background');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        /* Stats Section */
+        .stat-card {
+            border: none;
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-5px); background: white; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .stat-icon { font-size: 2.5rem; color: var(--accent); margin-bottom: 15px; }
+        .stat-number { font-size: 2.5rem; font-weight: bold; color: var(--primary); }
+
+        /* Feature Icons */
+        .feature-icon-box {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        /* Team Section */
+        .team-img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <section class="about-hero">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Bringing the Cinema Home</h1>
+            <p class="lead text-light opacity-75 mx-auto" style="max-width: 700px;">
+                We are passionate about technology. Since 2020, TeleMart has been the trusted destination for premium home entertainment systems.
+            </p>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container py-4">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <img src="https://via.placeholder.com/600x400?text=Our+Store+Interior" class="img-fluid rounded shadow-lg" alt="Our Story">
+                </div>
+                <div class="col-lg-6 ps-lg-5">
+                    <h6 class="text-primary fw-bold text-uppercase">Who We Are</h6>
+                    <h2 class="fw-bold mb-4">More Than Just a TV Shop</h2>
+                    <p class="text-muted">
+                        It started with a simple idea: buying a high-end TV shouldn't be confusing. At TeleMart, we curate only the best displays from top brands like Samsung, Sony, and LG.
+                    </p>
+                    <p class="text-muted">
+                        We don't just sell boxes; we sell experiences. Whether you are a gamer looking for 120Hz refresh rates or a movie buff needing perfect OLED blacks, our experts guide you to the perfect choice.
+                    </p>
+                    <div class="row mt-4">
+                        <div class="col-6">
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Official Warranty</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>24/7 Expert Support</li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Free Shipping</li>
+                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Best Price Guarantee</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-white py-5">
+        <div class="container">
+            <div class="row text-center g-4">
+                <div class="col-md-3 col-6">
+                    <div class="stat-card">
+                        <i class="fas fa-users stat-icon"></i>
+                        <div class="stat-number">15k+</div>
+                        <div class="text-muted">Happy Customers</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-card">
+                        <i class="fas fa-box-open stat-icon"></i>
+                        <div class="stat-number">20k+</div>
+                        <div class="text-muted">Orders Delivered</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-card">
+                        <i class="fas fa-award stat-icon"></i>
+                        <div class="stat-number">5</div>
+                        <div class="text-muted">Years of Trust</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-card">
+                        <i class="fas fa-star stat-icon"></i>
+                        <div class="stat-number">4.9</div>
+                        <div class="text-muted">Average Rating</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-light">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Why Shop With Us?</h2>
+                <p class="text-muted">We make upgrading your home entertainment easy.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="bg-white p-4 rounded h-100 shadow-sm">
+                        <div class="feature-icon-box">
+                            <i class="fas fa-shipping-fast"></i>
+                        </div>
+                        <h4>Fast & Safe Delivery</h4>
+                        <p class="text-muted">TVs are fragile. We use specialized logistics to ensure your screen arrives in perfect condition, usually within 48 hours.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="bg-white p-4 rounded h-100 shadow-sm">
+                        <div class="feature-icon-box">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4>Genuine Warranty</h4>
+                        <p class="text-muted">Every product is sourced directly from manufacturers. You get full brand warranty and our dedicated after-sales support.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="bg-white p-4 rounded h-100 shadow-sm">
+                        <div class="feature-icon-box">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h4>Expert Advice</h4>
+                        <p class="text-muted">Confused between QLED and OLED? Our tech experts are just a chat away to help you pick the right panel for your room.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h6 class="text-primary fw-bold text-uppercase">The Team</h6>
+                <h2 class="fw-bold">Meet Our Experts</h2>
+            </div>
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <img src="https://i.pravatar.cc/150?u=1" class="team-img" alt="CEO">
+                    <h5 class="fw-bold">Alex Morgan</h5>
+                    <p class="text-muted">Founder & CEO</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <img src="https://i.pravatar.cc/150?u=5" class="team-img" alt="Tech Lead">
+                    <h5 class="fw-bold">Sarah Jenkins</h5>
+                    <p class="text-muted">Head of Technology</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <img src="https://i.pravatar.cc/150?u=8" class="team-img" alt="Support">
+                    <h5 class="fw-bold">Michael Ross</h5>
+                    <p class="text-muted">Customer Success</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+{%endblock%}

@@ -2,12 +2,13 @@ from django.shortcuts import render,redirect
 from django.contrib.auth.hashers import check_password
 from .forms import RegisterForm
 from django.contrib import messages
-from .models import UserRegister
+from .models import UserRegister,Brand,Carousel
 from django.views import View
 from django.shortcuts import get_object_or_404, render,redirect
 
 def index(request):
-    return render(request, 'index.html')
+    brands = Brand.objects.all()
+    return render(request, 'index.html',{"brands": brands})
 def filter(request):
     return render(request, 'filter.html')
 def login(request):
@@ -36,6 +37,12 @@ def login(request):
 
 def header(request):
     return render(request,"header.html")
+
+def about_us(request):
+    return render(request,"about_us.html")
+
+def contact_us(request):
+    return render(request,"contact_us.html")
 
 def footer(request):
     return render(request,"footer.html")

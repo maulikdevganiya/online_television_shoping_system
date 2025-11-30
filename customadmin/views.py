@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
-# from app.middleware import admin_required 
+from app.forms import CarouselForm
+# from app.middleware import admin_required
 from datetime import *
-from app.models import Admin
+from app.models import Admin, Brand,Carousel,Product,ProductFeature
 from django.utils.timezone import now
+from decimal import Decimal
 # Create your views here.
 
 
@@ -20,6 +22,7 @@ def admin_login(request):
                 print("STATUS: LOGIN SUCCESS")
                 request.session["admin_id"] = admin_user.A_id
                 request.session["is_admin"] = True
+                request.session["admin_name"] = admin_user.name
                 return redirect("dashboard")
             else:
                 print("STATUS: WRONG PASSWORD")
@@ -47,8 +50,20 @@ def dashboard(request):
 
     return render(request, "dashboard.html", context)
 
+def admin_header(request):
+    # Check if admin is logged in
+    if "admin_id" not in request.session:
+        return redirect("admin_login")   # change URL name if needed
+
+    # Pass session values to template (optional because request.session already works)
+    context = {
+        "admin_name": request.session.get("admin_name")
+    }
+    return render(request, "admin_header.html", context)
+
 def product(request):
-    return render(request,"admin_product.html" )
+    products = Product.objects.all()
+    return render(request,"admin_product.html", {"products": products} )
 
 def payment(request):
     return render(request,"admin_payment.html" )
@@ -60,19 +75,143 @@ def customer(request):
     return render(request,"admin_customer.html" )
 
 def add_product(request):
-    return render(request,"add_product.html" )
+    if "admin_id" not in request.session:
+        return redirect("adminlogin")
+
+    brands = Brand.objects.all()  # Fetch all brands for the dropdown
+
+    if request.method == "POST":
+        try:
+            # 1. Get Basic Data
+            title = request.POST.get('title')
+            price = Decimal(request.POST.get('price'))
+            description = request.POST.get('description')
+            stock = int(request.POST.get('stock', 0))
+            brand_id = request.POST.get('brand')
+
+            # Handle Discount: If empty, set to 0, convert to int
+            discount_str = request.POST.get('discount')
+            if not discount_str:
+                discount = 0
+            else:
+                discount = int(float(discount_str))
+
+            # Get the brand instance
+            brand = Brand.objects.get(id=brand_id)
+
+            # 2. Create Product
+            # IMPORTANT: We must pass the images and map 'description' to 'description_html'
+            product = Product(
+                title=title,
+                original_price=price,
+                discount_percentage=discount,
+                stock=stock,
+                brand=brand,
+                description_html=description,  # FIXED: Model field is 'description_html'
+
+                # FIXED: Added the images here
+                main_image=request.FILES.get('main_image'),
+                thumb_1=request.FILES.get('thumb_1'),
+                thumb_2=request.FILES.get('thumb_2'),
+                thumb_3=request.FILES.get('thumb_3'),
+                thumb_4=request.FILES.get('thumb_4')
+            )
+
+            product.save() # This calculates final_price automatically via models.py
+
+            # 3. Handle Features
+            features_data = request.POST.get('features')
+            if features_data:
+                feature_list = features_data.split('\n')
+                for f in feature_list:
+                    clean_f = f.strip()
+                    if clean_f:
+                        ProductFeature.objects.create(product=product, feature_text=clean_f)
+
+            messages.success(request, "Product Added Successfully!")
+            return redirect('add_product')
+
+        except Exception as e:
+            # Print error to terminal so you can see exactly what's wrong
+            print(f"Error Saving Product: {e}")
+            messages.error(request, f"Error: {e}")
+
+    return render(request, 'add_product.html', {'brands': brands})
 
 def admin_collections(request):
     return render(request,"admin_collections.html" )
 
 def admin_brands(request):
-    return render(request,"admin_brands.html" )
+    if "admin_id" not in request.session:
+        return redirect("admin_login")
+    all_brands = Brand.objects.all()
+    return render(request,"admin_brands.html", {"brands": all_brands})
+
+def add_brand(request):
+    if request.method == "POST":
+        name = request.POST.get("bname")
+        desc = request.POST.get("description")
+        status = request.POST.get("status")
+        image = request.FILES.get("bimage")
+
+        Brand.objects.create(
+            bname=name,
+            description=desc,
+            bimage=image,
+            b_status=status
+        )
+
+        return redirect("admin_brands")
+
+    return redirect("admin_brands")
+
+def delete_brand(request, id):
+    brand = Brand.objects.get(id=id)
+    brand.delete()
+    return redirect("admin_brands")
+
+def edit_brand(request, id):
+    brand = Brand.objects.get(id=id)
+
+    if request.method == "POST":
+        brand.bname = request.POST.get("bname")
+        brand.description = request.POST.get("description")
+        brand.b_status = request.POST.get("status")
+
+        if "bimage" in request.FILES:
+            brand.bimage = request.FILES["bimage"]
+
+        brand.save()
+        return redirect("brands")
+
+    return render(request, "edit_brand.html", {"brand": brand})
+
+
 
 def admin_filter(request):
     return render(request,"admin_filter.html" )
 
 def admin_slider(request):
-    return render(request,"admin_slider.html" )
+    if request.method == "POST":
+        internal_name = request.POST.get("internal_name")
+        link = request.POST.get("link")
+        sort_order = request.POST.get("sort_order")
+        status = request.POST.get("status")
+        image = request.FILES.get("image")
+
+        Carousel.objects.create(
+            internal_name=internal_name,
+            link=link,
+            sort_order=sort_order,
+            status=status,
+            image=image
+        )
+
+        return redirect("admin_slider")
+
+    slides = Carousel.objects.all().order_by("sort_order")
+
+    return render(request, "admin_slider.html", {"slides": slides})
 
 def a_header(request):
     return render(request,"a_header.html" )
@@ -85,5 +224,72 @@ def admin_footer(request):
 
 def admin_msg(request):
     return render(request,"admin_msg.html" )
+
+def edit_product(request, id):
+    if "admin_id" not in request.session:
+        return redirect("adminlogin")
+
+    product = get_object_or_404(Product, id=id)
+    brands = Brand.objects.all()
+
+    if request.method == "POST":
+        try:
+            # Update basic data
+            product.title = request.POST.get('title')
+            product.original_price = Decimal(request.POST.get('price'))
+            product.description_html = request.POST.get('description')
+            product.stock = int(request.POST.get('stock', 0))
+
+            discount_str = request.POST.get('discount')
+            if not discount_str:
+                product.discount_percentage = 0
+            else:
+                product.discount_percentage = int(float(discount_str))
+
+            brand_id = request.POST.get('brand')
+            product.brand = Brand.objects.get(id=brand_id)
+
+            # Handle image updates
+            if request.FILES.get('main_image'):
+                product.main_image = request.FILES.get('main_image')
+            if request.FILES.get('thumb_1'):
+                product.thumb_1 = request.FILES.get('thumb_1')
+            if request.FILES.get('thumb_2'):
+                product.thumb_2 = request.FILES.get('thumb_2')
+            if request.FILES.get('thumb_3'):
+                product.thumb_3 = request.FILES.get('thumb_3')
+            if request.FILES.get('thumb_4'):
+                product.thumb_4 = request.FILES.get('thumb_4')
+
+            product.save()
+
+            # Handle features update
+            features_data = request.POST.get('features')
+            if features_data:
+                # Delete existing features
+                ProductFeature.objects.filter(product=product).delete()
+                feature_list = features_data.split('\n')
+                for f in feature_list:
+                    clean_f = f.strip()
+                    if clean_f:
+                        ProductFeature.objects.create(product=product, feature_text=clean_f)
+
+            messages.success(request, "Product Updated Successfully!")
+            return redirect('product')
+
+        except Exception as e:
+            print(f"Error Updating Product: {e}")
+            messages.error(request, f"Error: {e}")
+
+    return render(request, 'edit_product.html', {'product': product, 'brands': brands})
+
+def delete_product(request, id):
+    if "admin_id" not in request.session:
+        return redirect("adminlogin")
+
+    product = get_object_or_404(Product, id=id)
+    product.delete()
+    messages.success(request, "Product Deleted Successfully!")
+    return redirect('product')
 
 

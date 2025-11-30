@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% load static %}
+
+  {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - TeleMart Shop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+
+        /* Page Header */
+        .page-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        /* Info Cards */
+        .contact-info-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        .contact-info-card:hover { transform: translateY(-3px); }
+
+        .icon-box {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--accent);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Contact Form */
+        .contact-form-wrapper {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .form-control:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+
+        /* Map */
+        .map-container {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            height: 300px;
+        }
+
+        
+    </style>
+</head>
+<body>
+
+    <header class="page-header">
+        <div class="container">
+            <h1 class="fw-bold">Get In Touch</h1>
+            <p class="lead opacity-75">Have questions about a TV? Need support? We're here to help.</p>
+        </div>
+    </header>
+
+    <div class="container mb-5">
+        <div class="row g-5">
+            
+            <div class="col-lg-5">
+                <h4 class="fw-bold mb-4">Contact Information</h4>
+                
+                <div class="contact-info-card">
+                    <div class="icon-box"><i class="fas fa-map-marker-alt"></i></div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Our Store</h6>
+                        <p class="text-muted mb-0">123 Tech Street, Silicon Valley, CA 94000, USA</p>
+                    </div>
+                </div>
+
+                <div class="contact-info-card">
+                    <div class="icon-box"><i class="fas fa-phone-alt"></i></div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Call Us</h6>
+                        <p class="text-muted mb-0">+1 (555) 123-4567</p>
+                        <small class="text-success">Mon-Fri: 9am - 6pm</small>
+                    </div>
+                </div>
+
+                <div class="contact-info-card">
+                    <div class="icon-box"><i class="fas fa-envelope"></i></div>
+                    <div>
+                        <h6 class="fw-bold mb-1">Email Support</h6>
+                        <p class="text-muted mb-0">support@telemart.com</p>
+                        <p class="text-muted mb-0">sales@telemart.com</p>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold mt-5 mb-3">Find Us Here</h5>
+                <div class="map-container">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3168.628236556408!2d-122.086251584692!3d37.42206557982516!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808fba02425dad8f%3A0x6c296c66619367e0!2sGoogleplex!5e0!3m2!1sen!2sus!4v1619524992238!5m2!1sen!2sus" 
+                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy">
+                    </iframe>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="contact-form-wrapper">
+                    <h4 class="fw-bold mb-4">Send Us a Message</h4>
+                    <form id="contactForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Your Name</label>
+                                <input type="text" class="form-control" placeholder="John Doe" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" placeholder="john@example.com" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Subject</label>
+                            <select class="form-select">
+                                <option>General Inquiry</option>
+                                <option>Order Support</option>
+                                <option>Warranty Claim</option>
+                                <option>Product Question</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Message</label>
+                            <textarea class="form-control" rows="5" placeholder="How can we help you?" required></textarea>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="newsletter">
+                            <label class="form-check-label text-muted" for="newsletter">
+                                I agree to receive marketing emails (Optional)
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-paper-plane me-2"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Simple Form Submission Alert
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert("Thank you! Your message has been sent to our support team.");
+            this.reset();
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

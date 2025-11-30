@@ -89,38 +89,13 @@
 
     <!-- Brands -->
     <section class="flex p-8  justify-between">
-        <div class="flex flex-col items-center ">
-            <img src="{% static 'images/sumsung-logo.jpeg' %}" class="border-4 border-gray-200 rounded-full" alt="">
-            <span class="text-xs pt-2">Samsung</span>
-        </div>
-        <div class="flex flex-col items-center justify-between">
-            <img src="{% static 'images/lg-logo.jpeg' %}" class="border-4 border-gray-200 rounded-full"  alt="">
-            <span class="text-xs pt-2">LG</span>
-        </div>
-        <div class="flex flex-col items-center justify-between">
-            <img src="{% static 'images/sony-logo.jpeg' %}" class="border-4 border-gray-200 rounded-full"  alt="">
-            <span class="text-xs pt-2">Sony</span>
-        </div>
-        <div class="flex flex-col items-center justify-between">
-            <img src="{% static 'images/mi-logo.jpeg' %}" class="border-4 border-gray-200 rounded-full"  alt="">
-            <span class="text-xs pt-2">Xiaomi</span>
-        </div>
-        <div class="flex flex-col items-center justify-between">
-            <img src="{% static 'images/tcl-logo.jpeg' %}" class="border-4 border-gray-200 rounded-full"  alt="">
-            <span class="text-xs pt-2">TCL</span>
-        </div>
-        <div class="flex flex-col items-center justify-between">
-            <img src="{% static 'images/bpl-logo.jpeg' %}" class="border-4 border-gray-200 rounded-full" alt="">
-            <span class="text-xs pt-2">BPL</span>
-        </div>
-        <div class="flex flex-col items-center justify-between">
-            <img src="{% static 'images/toshiba-logo.jpeg' %}" class="border-4 border-gray-200 rounded-full"  alt="">
-            <span class="text-xs pt-2">Toshiba</span>
-        </div>
-        <div class="flex flex-col items-center justify-between">
-            <img src="{% static 'images/haier-logo.jpeg' %}" class="border-4 border-gray-200 rounded-full"  alt="">
-            <span class="text-xs pt-2">Haier</span>
-        </div>
+        {% for b in brands %}
+    <div class="flex flex-col items-center">
+        <img src="{{ b.bimage.url }}" class="border-4 border-gray-200 rounded-full w-20 h-20 object-cover" alt="{{ b.bname }}">
+        <span class="text-xs pt-2">{{ b.bname }}</span>
+    </div>
+    {% endfor %}
+
     </section>
 
 

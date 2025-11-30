@@ -19,6 +19,10 @@ urlpatterns = [
     path('profile', views.profile, name="profile" ),
     path('profile_sidebar', views.profile_sidebar, name="profile_sidebar" ),
     path('registration', views.registration, name="registration" ),
+    path('about_us', views.about_us, name="about_us" ),
+    path('contact_us', views.contact_us, name="contact_us" ),
     path("logout/", views.logout_view, name="logout"),
 
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
