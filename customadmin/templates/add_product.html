@@ -1,0 +1,323 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product - TV Shop Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
+
+
+        .main-content { margin-left: 250px; padding: 30px; padding-bottom: 100px; }
+
+        /* Card Styling */
+        .admin-card { background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding: 25px; margin-bottom: 25px; border: 1px solid #dee2e6; }
+        .card-header-custom { border-bottom: 1px solid #eee; margin-bottom: 20px; padding-bottom: 10px; font-weight: bold; color: #2c3e50; font-size: 1.1rem; }
+
+        /* Image Upload Slots */
+        .img-slot { border: 2px dashed #ccc; border-radius: 8px; padding: 10px; text-align: center; position: relative; background: #f9f9f9; transition: 0.2s; }
+        .img-slot:hover { border-color: #3498db; background: #fff; }
+        .img-preview { width: 100%; height: 100px; object-fit: contain; margin-bottom: 10px; display: block; }
+        .main-slot .img-preview { height: 180px; }
+        .main-slot { border-color: #3498db; background: #e3f2fd; }
+
+        /* Features List */
+        .feature-item { background: #f1f1f1; padding: 8px 12px; border-radius: 5px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+
+        /* Description Builder */
+        .desc-block { border: 1px solid #dee2e6; padding: 15px; border-radius: 8px; margin-bottom: 15px; position: relative; background: white; }
+        .remove-block-btn { position: absolute; top: 10px; right: 10px; color: #dc3545; cursor: pointer; }
+
+        @media (max-width: 768px) { .sidebar { width: 0; } .main-content { margin-left: 0; } }
+    </style>
+        <link rel="stylesheet" href="{% static 'Admin/css/admin_style.css' %}" />
+</head>
+<body>
+    {% include "admin_sidebar.html"%} {% include "admin_header.html"%}
+
+
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold">Add/Edit Product</h2>
+            <div>
+                <button class="btn btn-outline-primary me-2" onclick="generatePreviewModal()">
+                    <i class="fas fa-eye me-2"></i> Live Preview
+                </button>
+                <button class="btn btn-success">
+                    <i class="fas fa-save me-2"></i> Save Product
+                </button>
+            </div>
+        </div>
+
+        <form id="productForm">
+            
+            <div class="admin-card">
+                <div class="card-header-custom"><i class="fas fa-info-circle me-2"></i>Basic Details</div>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Product Title</label>
+                        <input type="text" class="form-control" id="pTitle" placeholder="e.g. Samsung Neo QLED 65 Inch" value="Samsung Neo QLED 65 Inch">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Original Price ($)</label>
+                        <input type="number" class="form-control" id="pPrice" value="2499" oninput="calcDiscount()">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Discount (%)</label>
+                        <input type="number" class="form-control" id="pDiscount" value="10" oninput="calcDiscount()">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Final Price (Auto)</label>
+                        <input type="text" class="form-control bg-light fw-bold text-success" id="pFinal" readonly value="2249.10">
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <div class="card-header-custom"><i class="fas fa-images me-2"></i>Media Gallery (1 Main + 4 Thumbnails)</div>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="img-slot main-slot">
+                            <span class="badge bg-primary mb-2">Main Image (Big)</span>
+                            <img src="https://via.placeholder.com/300?text=Main+Img" id="prev-0" class="img-preview">
+                            <input type="file" class="form-control form-control-sm" onchange="readURL(this, 'prev-0')">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row g-2">
+                            <div class="col-6 col-md-6">
+                                <div class="img-slot">
+                                    <small class="text-muted">Thumb 1</small>
+                                    <img src="https://via.placeholder.com/150?text=1" id="prev-1" class="img-preview">
+                                    <input type="file" class="form-control form-control-sm" onchange="readURL(this, 'prev-1')">
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-6">
+                                <div class="img-slot">
+                                    <small class="text-muted">Thumb 2</small>
+                                    <img src="https://via.placeholder.com/150?text=2" id="prev-2" class="img-preview">
+                                    <input type="file" class="form-control form-control-sm" onchange="readURL(this, 'prev-2')">
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-6">
+                                <div class="img-slot">
+                                    <small class="text-muted">Thumb 3</small>
+                                    <img src="https://via.placeholder.com/150?text=3" id="prev-3" class="img-preview">
+                                    <input type="file" class="form-control form-control-sm" onchange="readURL(this, 'prev-3')">
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-6">
+                                <div class="img-slot">
+                                    <small class="text-muted">Thumb 4</small>
+                                    <img src="https://via.placeholder.com/150?text=4" id="prev-4" class="img-preview">
+                                    <input type="file" class="form-control form-control-sm" onchange="readURL(this, 'prev-4')">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <div class="card-header-custom"><i class="fas fa-list-ul me-2"></i>Key Features</div>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="featureInput" placeholder="Type a feature and press Enter or Add">
+                    <button class="btn btn-primary" type="button" onclick="addFeature()">Add Feature</button>
+                </div>
+                <div id="featuresContainer">
+                    <div class="feature-item"><span>4K Resolution with AI Upscaling</span> <i class="fas fa-times text-danger" onclick="this.parentElement.remove()"></i></div>
+                    <div class="feature-item"><span>120Hz Refresh Rate for Gaming</span> <i class="fas fa-times text-danger" onclick="this.parentElement.remove()"></i></div>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <div class="card-header-custom d-flex justify-content-between">
+                    <span><i class="fas fa-align-left me-2"></i>Product Description</span>
+                    <div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addDescBlock('text')"><i class="fas fa-font"></i> Add Text</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addDescBlock('image')"><i class="fas fa-image"></i> Add Image</button>
+                    </div>
+                </div>
+                <div class="alert alert-info small py-2">Build your description by adding Text blocks and Image blocks in any order.</div>
+                
+                <div id="descriptionBuilder">
+                    </div>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="modal fade" id="previewModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title">Customer View Preview</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light" id="previewContent">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // 1. Image Preview Logic
+        function readURL(input, imgId) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(imgId).src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // 2. Calculate Discount
+        function calcDiscount() {
+            let price = parseFloat(document.getElementById('pPrice').value) || 0;
+            let disc = parseFloat(document.getElementById('pDiscount').value) || 0;
+            let final = price - (price * (disc/100));
+            document.getElementById('pFinal').value = final.toFixed(2);
+        }
+
+        // 3. Key Features Logic
+        function addFeature() {
+            const input = document.getElementById('featureInput');
+            const val = input.value.trim();
+            if(val) {
+                const container = document.getElementById('featuresContainer');
+                const div = document.createElement('div');
+                div.className = 'feature-item';
+                div.innerHTML = `<span><i class="fas fa-check text-success me-2"></i>${val}</span> <i class="fas fa-times text-danger cursor-pointer" onclick="this.parentElement.remove()"></i>`;
+                container.appendChild(div);
+                input.value = "";
+            }
+        }
+        // Allow Enter key
+        document.getElementById('featureInput').addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                addFeature();
+            }
+        });
+
+        // 4. Description Builder Logic
+        function addDescBlock(type) {
+            const container = document.getElementById('descriptionBuilder');
+            const div = document.createElement('div');
+            div.className = 'desc-block';
+            
+            if(type === 'text') {
+                div.setAttribute('data-type', 'text');
+                div.innerHTML = `
+                    <label class="fw-bold mb-1">Text Paragraph</label>
+                    <textarea class="form-control desc-text-content" rows="3" placeholder="Enter detailed text here..."></textarea>
+                    <i class="fas fa-trash remove-block-btn" onclick="this.parentElement.remove()"></i>
+                `;
+            } else {
+                div.setAttribute('data-type', 'image');
+                div.innerHTML = `
+                    <label class="fw-bold mb-1">Description Image</label>
+                    <input type="file" class="form-control mb-2" onchange="this.nextElementSibling.src = window.URL.createObjectURL(this.files[0])">
+                    <img src="https://via.placeholder.com/600x200?text=Desc+Image+Preview" class="img-fluid rounded desc-img-content" style="max-height: 150px;">
+                    <i class="fas fa-trash remove-block-btn" onclick="this.parentElement.remove()"></i>
+                `;
+            }
+            container.appendChild(div);
+        }
+
+        // Add dummy blocks for demo
+        window.onload = function() {
+            addDescBlock('text');
+            document.querySelector('.desc-text-content').value = "Experience vivid colors with the new Quantum Dot technology.";
+            addDescBlock('image');
+        };
+
+        // 5. GENERATE LIVE PREVIEW (The "Frontend" Logic)
+        function generatePreviewModal() {
+            // Gather Data
+            const title = document.getElementById('pTitle').value;
+            const price = document.getElementById('pPrice').value;
+            const finalPrice = document.getElementById('pFinal').value;
+            const discount = document.getElementById('pDiscount').value;
+            
+            // Gather Images
+            const mainSrc = document.getElementById('prev-0').src;
+            let thumbHTML = '';
+            for(let i=1; i<=4; i++) {
+                let src = document.getElementById('prev-'+i).src;
+                // Frontend logic: onclick, swap main image src
+                thumbHTML += `<img src="${src}" class="border rounded p-1" style="width: 70px; height: 50px; cursor: pointer; object-fit: cover;" onclick="document.getElementById('modalMainImg').src = this.src"> `;
+            }
+
+            // Gather Features
+            let featuresHTML = '';
+            document.querySelectorAll('#featuresContainer span').forEach(el => {
+                featuresHTML += `<li class="mb-2">${el.innerHTML}</li>`;
+            });
+
+            // Gather Description
+            let descHTML = '';
+            document.querySelectorAll('#descriptionBuilder .desc-block').forEach(block => {
+                if(block.getAttribute('data-type') === 'text') {
+                    let text = block.querySelector('textarea').value;
+                    descHTML += `<p class="lead fs-6">${text}</p>`;
+                } else {
+                    let imgSrc = block.querySelector('img').src;
+                    descHTML += `<img src="${imgSrc}" class="img-fluid rounded my-3 w-100">`;
+                }
+            });
+
+            // Build Modal HTML (Simulates Product Page)
+            const html = `
+                <div class="container bg-white p-4 rounded">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3 text-center border p-2 rounded">
+                                <img id="modalMainImg" src="${mainSrc}" class="img-fluid" style="max-height: 400px;">
+                            </div>
+                            <div class="d-flex justify-content-center gap-2">
+                                ${thumbHTML}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h2 class="fw-bold">${title}</h2>
+                            <div class="mb-3">
+                                <span class="text-danger fw-bold fs-3">$${finalPrice}</span>
+                                <span class="text-muted text-decoration-line-through ms-2">$${price}</span>
+                                <span class="badge bg-danger ms-2">-${discount}% OFF</span>
+                            </div>
+                            <h5 class="mt-4">Key Features:</h5>
+                            <ul class="list-unstyled">
+                                ${featuresHTML}
+                            </ul>
+                            <button class="btn btn-primary btn-lg w-100 mt-3"><i class="fas fa-shopping-cart"></i> Add to Cart</button>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-5">
+                    
+                    <div class="row">
+                        <div class="col-12">
+                            <h3 class="fw-bold mb-4">Product Description</h3>
+                            <div class="p-3 bg-light rounded">
+                                ${descHTML}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('previewContent').innerHTML = html;
+            new bootstrap.Modal(document.getElementById('previewModal')).show();
+        }
+    </script>
+</body>
+</html>

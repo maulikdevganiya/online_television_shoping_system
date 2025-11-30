@@ -1,0 +1,76 @@
+      body {
+        background-color: #f8f9fa;
+        font-family: "Segoe UI", sans-serif;
+        overflow-x: hidden;
+      }
+
+      /* --- MAIN CONTENT & HEADER --- */
+      .main-content {
+        margin-left: 250px;
+        transition: all 0.3s;
+      }
+
+      /* --- DASHBOARD WIDGETS --- */
+      .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+        border: none;
+        transition: transform 0.2s;
+        height: 100%;
+      }
+      .stat-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .stat-icon-box {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+      }
+
+      .bg-light-primary {
+        background: #e3f2fd;
+        color: #0d6efd;
+      }
+      .bg-light-success {
+        background: #d1e7dd;
+        color: #0f5132;
+      }
+      .bg-light-warning {
+        background: #fff3cd;
+        color: #856404;
+      }
+      .bg-light-danger {
+        background: #f8d7da;
+        color: #842029;
+      }
+
+      .chart-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+        margin-bottom: 25px;
+      }
+
+      /* Responsive Sidebar Logic */
+      @media (max-width: 992px) {
+        .sidebar {
+          margin-left: -250px;
+        }
+        .sidebar.active {
+          margin-left: 0;
+        }
+        .main-content {
+          margin-left: 0;
+        }
+        .menu-toggle {
+          display: block;
+        }
+      }

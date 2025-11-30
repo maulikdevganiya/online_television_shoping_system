@@ -1,0 +1,374 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Footer Settings - TV Shop Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
+            padding-bottom: 300px; /* Space for fixed preview */
+        }
+
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        /* Settings Card */
+        .settings-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        /* LIVE PREVIEW STYLING (Matches your frontend image) */
+        .footer-preview-wrapper {
+            background-color: #fff;
+            border-top: 5px solid #2c3e50;
+            padding: 40px 0 20px 0;
+            margin-top: 30px;
+            border-radius: 10px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+        }
+
+        .footer-heading {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #212529;
+        }
+
+        .footer-text {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .footer-link {
+            display: block;
+            color: #555;
+            text-decoration: none;
+            margin-bottom: 8px;
+        }
+
+        .social-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            color: #000;
+        }
+
+        .copyright-bar {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 0; }
+            .main-content { margin-left: 0; }
+        }
+    </style>
+        <link rel="stylesheet" href="{% static 'Admin/css/admin_style.css' %}" />
+</head>
+<body>
+
+    {% include "admin_sidebar.html"%} {% include "admin_header.html"%}
+
+    <div class="main-content">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold">Footer Configuration</h2>
+                <p class="text-muted">Edit contact info, social links, and copyright text.</p>
+            </div>
+            <button class="btn btn-success" onclick="saveFooter()">
+                <i class="fas fa-save me-2"></i> Save Changes
+            </button>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                
+                <ul class="nav nav-tabs mb-3" id="footerTabs">
+                    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-general">General Info</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-contact">Contact Details</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-links">Quick Links</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-social">Social Media</a></li>
+                </ul>
+
+                <div class="tab-content settings-card">
+                    
+                    <div class="tab-pane fade show active" id="tab-general">
+                        <h5 class="mb-3">About Section</h5>
+                        <div class="mb-3">
+                            <label class="form-label">Heading</label>
+                            <input type="text" class="form-control" id="aboutTitle" value="About Us" oninput="updatePreview()">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description Text</label>
+                            <textarea class="form-control" id="aboutText" rows="3" oninput="updatePreview()">We're your trusted TV experts, providing quality TeleVision solutions for over 20 years.</textarea>
+                        </div>
+                        <hr>
+                        <h5 class="mb-3">Copyright Bar</h5>
+                        <div class="mb-3">
+                            <label class="form-label">Copyright Text</label>
+                            <input type="text" class="form-control" id="copyText" value="© 2025 TeleMart Shop. All rights reserved." oninput="updatePreview()">
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab-contact">
+                        <h5 class="mb-3">Contact Information</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Heading</label>
+                                <input type="text" class="form-control" id="contactTitle" value="Contact" oninput="updatePreview()">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="contactEmail" value="info@TVshop.com" oninput="updatePreview()">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Phone Number</label>
+                                <input type="text" class="form-control" id="contactPhone" value="(123) 456-7890" oninput="updatePreview()">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Address</label>
+                                <input type="text" class="form-control" id="contactAddress" value="123 Cool St, Chillville, TV 12345" oninput="updatePreview()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab-links">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5>Quick Links Menu</h5>
+                            <button class="btn btn-sm btn-outline-primary" onclick="addLinkRow()"><i class="fas fa-plus"></i> Add Link</button>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Section Heading</label>
+                            <input type="text" class="form-control mb-3" id="linksTitle" value="Quick Links" oninput="updatePreview()">
+                        </div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="table-light">
+                                    <th>Link Text</th>
+                                    <th>URL</th>
+                                    <th style="width: 50px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="linksTableBody">
+                                </tbody>
+                        </table>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab-social">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5>Social Icons</h5>
+                            <button class="btn btn-sm btn-outline-primary" onclick="addSocialRow()"><i class="fas fa-plus"></i> Add Icon</button>
+                        </div>
+                         <div class="mb-3">
+                            <label class="form-label">Section Heading</label>
+                            <input type="text" class="form-control mb-3" id="socialTitle" value="Follow Us" oninput="updatePreview()">
+                        </div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="table-light">
+                                    <th>Platform (Icon Class)</th>
+                                    <th>Profile URL</th>
+                                    <th style="width: 50px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="socialTableBody">
+                                </tbody>
+                        </table>
+                        <div class="form-text">Use FontAwesome classes like: <code>fab fa-facebook</code>, <code>fab fa-twitter</code>, <code>fab fa-instagram</code></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <h4 class="text-muted mb-3"><i class="fas fa-eye me-2"></i>Live Footer Preview</h4>
+        <div class="footer-preview-wrapper container-fluid">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="footer-heading" id="prev-aboutTitle">About Us</div>
+                    <p class="footer-text" id="prev-aboutText">
+                        We're your trusted TV experts, providing quality TeleVision solutions for over 20 years.
+                    </p>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <div class="footer-heading" id="prev-contactTitle">Contact</div>
+                    <p class="footer-text mb-1">Email: <span id="prev-email">info@TVshop.com</span></p>
+                    <p class="footer-text mb-1">Phone: <span id="prev-phone">(123) 456-7890</span></p>
+                    <p class="footer-text">Address: <span id="prev-address">123 Cool St, Chillville, TV 12345</span></p>
+                </div>
+
+                <div class="col-md-2 mb-4">
+                    <div class="footer-heading" id="prev-linksTitle">Quick Links</div>
+                    <div id="prev-links-container">
+                        </div>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <div class="footer-heading" id="prev-socialTitle">Follow Us</div>
+                    <div id="prev-social-container">
+                        </div>
+                </div>
+            </div>
+
+            <div class="copyright-bar" id="prev-copyText">
+                © 2025 TeleMart Shop. All rights reserved.
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // 1. Initial Data
+        let quickLinks = [
+            { text: "Services", url: "/services" },
+            { text: "Products", url: "/products" },
+            { text: "FAQs", url: "/faqs" }
+        ];
+
+        let socialLinks = [
+            { icon: "fab fa-facebook", url: "https://facebook.com" },
+            { icon: "fab fa-twitter", url: "https://twitter.com" },
+            { icon: "fab fa-instagram", url: "https://instagram.com" }
+        ];
+
+        // 2. Render Functions (Admin Inputs)
+        function renderInputs() {
+            // Render Quick Links Inputs
+            const linksBody = document.getElementById('linksTableBody');
+            linksBody.innerHTML = "";
+            quickLinks.forEach((link, index) => {
+                linksBody.innerHTML += `
+                    <tr>
+                        <td><input type="text" class="form-control" value="${link.text}" oninput="updateLink(${index}, 'text', this.value)"></td>
+                        <td><input type="text" class="form-control" value="${link.url}" oninput="updateLink(${index}, 'url', this.value)"></td>
+                        <td><button class="btn btn-outline-danger btn-sm" onclick="removeLink(${index})"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+
+            // Render Social Inputs
+            const socialBody = document.getElementById('socialTableBody');
+            socialBody.innerHTML = "";
+            socialLinks.forEach((soc, index) => {
+                socialBody.innerHTML += `
+                    <tr>
+                        <td><input type="text" class="form-control" value="${soc.icon}" oninput="updateSocial(${index}, 'icon', this.value)"></td>
+                        <td><input type="text" class="form-control" value="${soc.url}" oninput="updateSocial(${index}, 'url', this.value)"></td>
+                        <td><button class="btn btn-outline-danger btn-sm" onclick="removeSocial(${index})"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+
+            updatePreview(); // Sync Preview
+        }
+
+        // 3. Update Logic (Dynamic Lists)
+        function updateLink(index, field, value) {
+            quickLinks[index][field] = value;
+            updatePreview();
+        }
+
+        function updateSocial(index, field, value) {
+            socialLinks[index][field] = value;
+            updatePreview();
+        }
+
+        function addLinkRow() {
+            quickLinks.push({ text: "New Link", url: "#" });
+            renderInputs();
+        }
+
+        function removeLink(index) {
+            quickLinks.splice(index, 1);
+            renderInputs();
+        }
+
+        function addSocialRow() {
+            socialLinks.push({ icon: "fab fa-facebook", url: "#" });
+            renderInputs();
+        }
+
+        function removeSocial(index) {
+            socialLinks.splice(index, 1);
+            renderInputs();
+        }
+
+        // 4. PREVIEW LOGIC (The Magic Part)
+        function updatePreview() {
+            // Text Fields
+            document.getElementById('prev-aboutTitle').innerText = document.getElementById('aboutTitle').value;
+            document.getElementById('prev-aboutText').innerText = document.getElementById('aboutText').value;
+            document.getElementById('prev-copyText').innerText = document.getElementById('copyText').value;
+            
+            document.getElementById('prev-contactTitle').innerText = document.getElementById('contactTitle').value;
+            document.getElementById('prev-email').innerText = document.getElementById('contactEmail').value;
+            document.getElementById('prev-phone').innerText = document.getElementById('contactPhone').value;
+            document.getElementById('prev-address').innerText = document.getElementById('contactAddress').value;
+
+            document.getElementById('prev-linksTitle').innerText = document.getElementById('linksTitle').value;
+            document.getElementById('prev-socialTitle').innerText = document.getElementById('socialTitle').value;
+
+            // Render Quick Links in Preview
+            const linkCont = document.getElementById('prev-links-container');
+            linkCont.innerHTML = "";
+            quickLinks.forEach(l => {
+                linkCont.innerHTML += `<a href="#" class="footer-link">${l.text}</a>`;
+            });
+
+            // Render Socials in Preview
+            const socCont = document.getElementById('prev-social-container');
+            socCont.innerHTML = "";
+            socialLinks.forEach(s => {
+                socCont.innerHTML += `<i class="${s.icon} social-icon"></i>`;
+            });
+        }
+
+        // 5. Save Button
+        function saveFooter() {
+            // In a real app, this sends a JSON object to the server
+            const footerData = {
+                about: {
+                    title: document.getElementById('aboutTitle').value,
+                    text: document.getElementById('aboutText').value
+                },
+                contact: {
+                    email: document.getElementById('contactEmail').value,
+                    phone: document.getElementById('contactPhone').value,
+                    address: document.getElementById('contactAddress').value
+                },
+                links: quickLinks,
+                social: socialLinks,
+                copyright: document.getElementById('copyText').value
+            };
+
+            console.log("Saving Data:", footerData);
+            alert("Footer settings saved successfully!");
+        }
+
+        // Initialize
+        renderInputs();
+
+    </script>
+</body>
+</html>

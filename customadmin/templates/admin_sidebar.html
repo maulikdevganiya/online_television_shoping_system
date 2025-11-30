@@ -1,0 +1,77 @@
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'Admin/css/admin_sidebar.css' %}">
+
+<div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-tv text-primary me-2"></i> TV SHOP ADMIN
+        </div>
+
+        <a href="{%url 'dashboard'%}" class="active"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
+
+        <button class="dropdown-btn" onclick="toggleDropdown('catalogMenu', this)">
+            <i class="fas fa-box me-2"></i> Catalog 
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-container" id="catalogMenu">
+            <a href="{%url 'product'%}"><i class="fas fa-list me-2"></i> All Products</a>
+            <a href="{%url 'add_product'%}"><i class="fas fa-plus me-2"></i> Add Product</a>
+            <a href="{%url 'admin_brands'%}"><i class="fas fa-tags me-2"></i> Brands</a>
+            <a href="{%url 'admin_filter'%}"><i class="fas fa-sliders-h me-2"></i> Filters</a>
+        </div>
+
+        <button class="dropdown-btn" onclick="toggleDropdown('salesMenu', this)">
+            <i class="fas fa-shopping-cart me-2"></i> Sales 
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-container" id="salesMenu">
+            <a href="{%url 'order'%}"><i class="fas fa-file-invoice-dollar me-2"></i> Orders</a>
+            <a href="{%url 'payment'%}"><i class="fas fa-money-bill-wave me-2"></i> Payments</a>
+            <a href="{%url 'customer'%}"><i class="fas fa-users me-2"></i> Customers</a>
+        </div>
+
+        <button class="dropdown-btn" onclick="toggleDropdown('contentMenu', this)">
+            <i class="fas fa-desktop me-2"></i> Homepage
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-container" id="contentMenu">
+            <a href="{%url 'admin_slider'%}"><i class="fas fa-images me-2"></i> Main Slider</a>
+            <a href="{%url 'a_header'%}"><i class="fas fa-heading me-2"></i> Header</a>
+            <a href="{%url 'admin_collections'%}"><i class="fas fa-th-large me-2"></i> Collections</a>
+            <a href="{%url 'admin_image_sections'%}"><i class="fas fa-th me-2"></i> Image Grids</a>
+            <a href="{%url 'admin_footer'%}"><i class="fas fa-shoe-prints me-2"></i> Footer</a>
+        </div>
+        
+        <a href="{%url 'admin_msg'%}"><i class="fas fa-envelope me-2"></i> Inbox</a>
+
+        <a href="login.html" class="mt-4 text-danger"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+    </div>
+
+<script>
+    function toggleDropdown(menuId, btn) {
+        const dropdown = document.getElementById(menuId);
+        const isVisible = dropdown.style.display === "block";
+
+        dropdown.style.display = isVisible ? "none" : "block";
+        btn.classList.toggle("active", !isVisible);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const path = window.location.pathname.split("/").pop();
+        const links = document.querySelectorAll(".dropdown-container a");
+
+        links.forEach(link => {
+            if (link.getAttribute("href") === path) {
+                link.style.color = "white";
+                link.style.backgroundColor = "#2c3e50";
+                link.style.borderLeft = "4px solid #3498db";
+
+                const parent = link.parentElement;
+                parent.style.display = "block";
+
+                const button = parent.previousElementSibling;
+                if (button) button.classList.add("active");
+            }
+        });
+    });
+</script>

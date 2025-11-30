@@ -1,0 +1,116 @@
+{% load static %}
+<nav
+  class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow-sm px-4"
+>
+  <button
+    id="sidebarToggleTop"
+    class="btn btn-link d-md-none rounded-circle mr-3"
+  >
+    <i class="fa fa-bars"></i>
+  </button>
+
+  <h5 class="d-none d-sm-block m-0 font-weight-bold text-primary">Overview</h5>
+
+  <form
+    class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search ms-4"
+  >
+    <div class="input-group">
+      <input
+        type="text"
+        class="form-control bg-light border-0 small"
+        placeholder="Search for..."
+        aria-label="Search"
+        aria-describedby="basic-addon2"
+        style="border-radius: 20px"
+      />
+    </div>
+  </form>
+
+  <ul class="navbar-nav ms-auto align-items-center">
+    <div class="notification-icon">
+      <i class="far fa-bell"></i>
+      <span class="notification-badge">3</span>
+    </div>
+
+    <div class="notification-icon">
+      <i class="far fa-envelope"></i>
+      <span class="notification-badge">5</span>
+    </div>
+
+    <div
+      class="topbar-divider d-none d-sm-block border-end mx-2"
+      style="height: 2rem"
+    ></div>
+
+    <li class="nav-item dropdown no-arrow">
+      <a
+        class="nav-link dropdown-toggle d-flex align-items-center"
+        href="#"
+        id="userDropdown"
+        role="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        <span class="mr-2 d-none d-lg-inline text-gray-600 small me-2 fw-bold"
+          >Admin User</span
+        >
+        <img
+          class="img-profile rounded-circle"
+          src="https://ui-avatars.com/api/?name=Admin+User&background=2c3e50&color=fff"
+          style="width: 35px; height: 35px"
+        />
+      </a>
+      <ul
+        class="dropdown-menu dropdown-menu-end shadow animated--grow-in"
+        aria-labelledby="userDropdown"
+      >
+        <li>
+          <a class="dropdown-item" href="#"
+            ><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400 me-2"></i>
+            Profile</a
+          >
+        </li>
+        <li>
+          <a class="dropdown-item" href="#"
+            ><i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400 me-2"></i>
+            Settings</a
+          >
+        </li>
+        <li><hr class="dropdown-divider" /></li>
+        <li>
+          <a
+            class="dropdown-item text-danger"
+            href="#"
+            data-bs-toggle="modal"
+            data-bs-target="#logoutModal"
+            ><i
+              class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-danger me-2"
+            ></i>
+            Logout</a
+          >
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // ... Your existing Dropdown code ...
+
+    // NEW: Header Hamburger Toggle Logic
+    const sidebarToggle = document.getElementById("sidebarToggleTop");
+    const sidebar = document.querySelector(".sidebar");
+    const content = document.querySelector(".main-content"); // Assuming your page content is wrapped in this class
+    const topbar = document.querySelector(".topbar");
+
+    if (sidebarToggle) {
+      sidebarToggle.addEventListener("click", function (e) {
+        e.preventDefault();
+        sidebar.classList.toggle("active");
+
+        // Optional: If you want to push content on desktop toggle
+        // content.classList.toggle('pushed');
+      });
+    }
+  });
+</script>

@@ -1,0 +1,273 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Inbox - TV Shop Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
+
+
+        .main-content { margin-left: 250px; padding: 30px; }
+
+        /* Inbox Styling */
+        .message-row { cursor: pointer; transition: 0.1s; }
+        .message-row:hover { background-color: #f1f3f5; }
+        .message-row.unread { background-color: #ffffff; font-weight: bold; border-left: 4px solid #3498db; }
+        .message-row.read { background-color: #f8f9fa; color: #6c757d; }
+
+        .subject-badge { font-size: 0.8rem; padding: 4px 8px; border-radius: 4px; }
+        .badge-warranty { background-color: #fff3cd; color: #856404; }
+        .badge-sales { background-color: #d1e7dd; color: #0f5132; }
+        .badge-general { background-color: #e2e3e5; color: #383d41; }
+        .badge-urgent { background-color: #f8d7da; color: #721c24; }
+
+        .sender-avatar {
+            width: 40px; height: 40px; border-radius: 50%;
+            background-color: #e9ecef; color: #495057;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; margin-right: 15px;
+        }
+
+        /* Reply Section in Modal */
+        .reply-box {
+            background-color: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+            padding: 20px;
+            margin-top: 20px;
+        }
+    </style>
+        <link rel="stylesheet" href="{% static 'Admin/css/admin_style.css' %}" />
+</head>
+<body>
+    {% include "admin_sidebar.html"%} {% include "admin_header.html"%}
+
+
+    <div class="main-content">
+        
+        <h2 class="fw-bold mb-4">Support Inbox</h2>
+
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6>Unread Messages</h6>
+                        <h2 id="countUnread">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-dark border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6>Warranty Claims</h6>
+                        <h2 id="countWarranty">0</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 mb-3">
+            <div class="card-body d-flex justify-content-between align-items-center p-2">
+                <div class="btn-group">
+                    <button class="btn btn-light active" onclick="filterMsgs('All')">All</button>
+                    <button class="btn btn-light" onclick="filterMsgs('Unread')">Unread</button>
+                    <button class="btn btn-light" onclick="filterMsgs('Warranty')">Warranty</button>
+                </div>
+                <div class="input-group" style="max-width: 300px;">
+                    <span class="input-group-text bg-white border-end-0"><i class="fas fa-search"></i></span>
+                    <input type="text" class="form-control border-start-0" placeholder="Search email or name..." onkeyup="searchMsgs(this.value)">
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Sender</th>
+                            <th>Subject</th>
+                            <th>Preview</th>
+                            <th>Date</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="msgTableBody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="msgModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-envelope-open-text me-2"></i>Read Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="p-4">
+                        <div class="d-flex justify-content-between mb-3">
+                            <h4 class="fw-bold" id="mSubject">Subject Here</h4>
+                            <span class="text-muted small" id="mDate">Nov 29, 2025</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="sender-avatar bg-primary text-white" id="mAvatar">JD</div>
+                            <div>
+                                <div class="fw-bold" id="mName">John Doe</div>
+                                <div class="text-muted small" id="mEmail">john@example.com</div>
+                            </div>
+                        </div>
+                        <div class="bg-light p-3 rounded border">
+                            <p class="mb-0 text-dark" id="mBody" style="white-space: pre-wrap;">Message content...</p>
+                        </div>
+                    </div>
+
+                    <div class="reply-box">
+                        <h6 class="fw-bold mb-2"><i class="fas fa-reply me-2"></i>Reply to Customer</h6>
+                        <textarea class="form-control mb-3" rows="4" placeholder="Type your response here..."></textarea>
+                        <div class="d-flex justify-content-end gap-2">
+                            <button class="btn btn-outline-secondary" onclick="markAsRead()"><i class="fas fa-check"></i> Mark as Read</button>
+                            <button class="btn btn-primary" onclick="sendReply()"><i class="fas fa-paper-plane"></i> Send Email</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Sidebar Toggle
+        function toggleDropdown(menuId, btn) {
+            var dropdown = document.getElementById(menuId);
+            if (dropdown.style.display === "block") { dropdown.style.display = "none"; btn.classList.remove("active"); } 
+            else { dropdown.style.display = "block"; btn.classList.add("active"); }
+        }
+
+        // 1. Mock Data (From Contact Form)
+        let messages = [
+            { id: 1, name: "Alice Walker", email: "alice@test.com", subject: "Warranty Claim", body: "My TV screen is flickering. It is only 3 months old. Please help.", date: "2 hrs ago", status: "Unread", category: "Warranty" },
+            { id: 2, name: "Bob Jones", email: "bob@test.com", subject: "Product Question", body: "Does the Samsung QLED support 120Hz for PS5 gaming?", date: "5 hrs ago", status: "Unread", category: "Sales" },
+            { id: 3, name: "Charlie Day", email: "charlie@test.com", subject: "Order Status", body: "Where is my order #ORD-992? It has been 5 days.", date: "1 day ago", status: "Read", category: "Urgent" },
+            { id: 4, name: "David Smith", email: "david@test.com", subject: "General Inquiry", body: "Do you ship to Alaska?", date: "2 days ago", status: "Read", category: "General" }
+        ];
+
+        let currentMsgId = null;
+
+        // 2. Render Table
+        function renderMessages(data) {
+            const tbody = document.getElementById('msgTableBody');
+            tbody.innerHTML = "";
+            
+            let unreadCount = 0;
+            let warrantyCount = 0;
+
+            data.forEach(msg => {
+                if(msg.status === 'Unread') unreadCount++;
+                if(msg.category === 'Warranty') warrantyCount++;
+
+                // Determine Badge Class
+                let badgeClass = 'badge-general';
+                if(msg.category === 'Warranty') badgeClass = 'badge-warranty';
+                if(msg.category === 'Sales') badgeClass = 'badge-sales';
+                if(msg.category === 'Urgent') badgeClass = 'badge-urgent';
+
+                // Determine Row Class
+                let rowClass = msg.status === 'Unread' ? 'message-row unread' : 'message-row read';
+                let icon = msg.status === 'Unread' ? '<i class="fas fa-envelope text-primary"></i>' : '<i class="far fa-envelope-open text-muted"></i>';
+
+                tbody.innerHTML += `
+                    <tr class="${rowClass}" onclick="openMessage(${msg.id})">
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <div class="sender-avatar" style="width:30px; height:30px; font-size:12px; margin-right:10px;">
+                                    ${msg.name.charAt(0)}
+                                </div>
+                                <span>${msg.name}</span>
+                            </div>
+                        </td>
+                        <td><span class="subject-badge ${badgeClass}">${msg.subject}</span></td>
+                        <td class="text-muted text-truncate" style="max-width: 200px;">${msg.body}</td>
+                        <td class="small text-muted">${msg.date}</td>
+                        <td class="text-end pe-4">
+                            ${icon}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Update Stats
+            document.getElementById('countUnread').innerText = unreadCount;
+            document.getElementById('countWarranty').innerText = warrantyCount;
+        }
+
+        // 3. Open Message Modal
+        const msgModal = new bootstrap.Modal(document.getElementById('msgModal'));
+
+        function openMessage(id) {
+            currentMsgId = id;
+            const msg = messages.find(m => m.id === id);
+
+            document.getElementById('mSubject').innerText = msg.subject;
+            document.getElementById('mDate').innerText = msg.date;
+            document.getElementById('mName').innerText = msg.name;
+            document.getElementById('mEmail').innerText = msg.email;
+            document.getElementById('mBody').innerText = msg.body;
+            document.getElementById('mAvatar').innerText = msg.name.charAt(0);
+
+            // Mark as read visually in backend data (optional, depends on workflow)
+            // msg.status = "Read"; 
+            
+            msgModal.show();
+        }
+
+        // 4. Actions
+        function markAsRead() {
+            const index = messages.findIndex(m => m.id === currentMsgId);
+            messages[index].status = "Read";
+            msgModal.hide();
+            renderMessages(messages); // Refresh table
+        }
+
+        function sendReply() {
+            const msg = messages.find(m => m.id === currentMsgId);
+            
+            // In a real app, this sends data to server.
+            // Here, we simulate opening the default email client.
+            window.location.href = `mailto:${msg.email}?subject=Re: ${msg.subject}&body=Dear ${msg.name},%0D%0A%0D%0AThank you for contacting TV Shop...`;
+            
+            alert("Email client opened for reply!");
+            markAsRead(); // Auto mark as read after replying
+        }
+
+        // 5. Filtering
+        function filterMsgs(type) {
+            if(type === 'All') renderMessages(messages);
+            else if(type === 'Unread') renderMessages(messages.filter(m => m.status === 'Unread'));
+            else if(type === 'Warranty') renderMessages(messages.filter(m => m.category === 'Warranty'));
+        }
+
+        function searchMsgs(val) {
+            val = val.toLowerCase();
+            const filtered = messages.filter(m => 
+                m.name.toLowerCase().includes(val) || 
+                m.email.toLowerCase().includes(val) || 
+                m.subject.toLowerCase().includes(val)
+            );
+            renderMessages(filtered);
+        }
+
+        // Init
+        renderMessages(messages);
+
+    </script>
+</body>
+</html>

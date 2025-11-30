@@ -48,13 +48,42 @@ def dashboard(request):
     return render(request, "dashboard.html", context)
 
 def product(request):
-    return render(request,"product.html" )
+    return render(request,"admin_product.html" )
 
 def payment(request):
-    return render(request,"payment.html" )
+    return render(request,"admin_payment.html" )
 
 def order(request):
-    return render(request,"order.html" )
+    return render(request,"admin_order.html" )
 
 def customer(request):
-    return render(request,"customer.html" )
+    return render(request,"admin_customer.html" )
+
+def add_product(request):
+    return render(request,"add_product.html" )
+
+def admin_collections(request):
+    return render(request,"admin_collections.html" )
+
+def admin_brands(request):
+    return render(request,"admin_brands.html" )
+
+def admin_filter(request):
+    return render(request,"admin_filter.html" )
+
+def admin_slider(request):
+    return render(request,"admin_slider.html" )
+
+def a_header(request):
+    return render(request,"a_header.html" )
+
+def admin_image_sections(request):
+    return render(request,"admin_image_sections.html" )
+
+def admin_footer(request):
+    return render(request,"admin_footer.html" )
+
+def admin_msg(request):
+    return render(request,"admin_msg.html" )
+
+

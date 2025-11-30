@@ -1,0 +1,321 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Header Manager - TV Shop Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; padding-bottom: 300px; }
+
+        .main-content { margin-left: 250px; padding: 30px; }
+
+        /* Preview Area Styling */
+        .preview-wrapper {
+            position: fixed;
+            bottom: 0;
+            left: 250px; /* Offset for sidebar */
+            right: 0;
+            background: white;
+            border-top: 5px solid #2c3e50;
+            z-index: 900;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .preview-label {
+            background: #2c3e50;
+            color: white;
+            padding: 5px 15px;
+            display: inline-block;
+            border-radius: 0 0 5px 0;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Fake Frontend Header Styles */
+        .fe-topbar { padding: 8px; text-align: center; font-size: 14px; font-weight: 500; }
+        .fe-navbar { border-bottom: 1px solid #eee; padding: 15px 0; background: white; }
+        .fe-nav-link { color: #333; text-decoration: none; margin: 0 15px; font-weight: 500; transition: 0.2s; }
+        .fe-nav-link:hover { color: #0d6efd; }
+        .fe-logo { max-height: 40px; }
+    </style>
+        <link rel="stylesheet" href="{% static 'Admin/css/admin_style.css' %}" />
+
+</head>
+<body>
+    {% include "admin_sidebar.html"%} {% include "admin_header.html"%}
+
+
+    <div class="main-content">
+        <h2 class="fw-bold mb-4">Header Configuration</h2>
+
+        <div class="row">
+            <div class="col-lg-5">
+                <div class="card mb-4 shadow-sm border-0">
+                    <div class="card-header bg-white fw-bold"><i class="fas fa-bullhorn me-2 text-primary"></i>Top Announcement Bar</div>
+                    <div class="card-body">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="topBarShow" checked onchange="updatePreview()">
+                            <label class="form-check-label">Show Top Bar</label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Announcement Text</label>
+                            <input type="text" class="form-control" id="topBarText" value="Free Shipping on Orders Over $500!" oninput="updatePreview()">
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Background Color</label>
+                                <input type="color" class="form-control form-control-color w-100" id="topBarBg" value="#212529" oninput="updatePreview()">
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Text Color</label>
+                                <input type="color" class="form-control form-control-color w-100" id="topBarColor" value="#ffffff" oninput="updatePreview()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4 shadow-sm border-0">
+                    <div class="card-header bg-white fw-bold"><i class="fas fa-image me-2 text-primary"></i>Website Logo</div>
+                    <div class="card-body text-center">
+                        <div class="bg-light p-3 border rounded mb-3">
+                            <img id="logoPreviewAdmin" src="https://via.placeholder.com/150x50?text=YOUR+LOGO" style="max-height: 50px;">
+                        </div>
+                        <input type="file" class="form-control" id="logoInput" accept="image/*">
+                        <div class="form-text">Recommended height: 50px (PNG/SVG)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="card mb-4 shadow-sm border-0">
+                    <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-bars me-2 text-primary"></i>Navigation Menu</span>
+                        <button class="btn btn-sm btn-primary" onclick="openLinkModal()"><i class="fas fa-plus"></i> Add Link</button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 50px;">Order</th>
+                                        <th>Label</th>
+                                        <th>Target URL</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="menuTableBody">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="preview-wrapper">
+        <div class="preview-label"><i class="fas fa-eye me-1"></i> Live Header Preview</div>
+        
+        <div id="fe-wrapper">
+            <div id="fe-topbar" class="fe-topbar">
+                </div>
+
+            <div class="fe-navbar">
+                <div class="container d-flex justify-content-between align-items-center">
+                    <a href="#">
+                        <img id="fe-logo" src="https://via.placeholder.com/150x50?text=YOUR+LOGO" class="fe-logo">
+                    </a>
+
+                    <div id="fe-menu-container" class="d-none d-md-block">
+                        </div>
+
+                    <div class="d-flex gap-3">
+                        <i class="fas fa-search"></i>
+                        <i class="fas fa-user"></i>
+                        <div class="position-relative">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.5rem;">2</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="linkModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Add Menu Link</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="linkForm">
+                        <input type="hidden" id="editId">
+                        <div class="mb-3">
+                            <label class="form-label">Link Label</label>
+                            <input type="text" class="form-control" id="linkName" placeholder="e.g. Smart TVs" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">URL Path</label>
+                            <input type="text" class="form-control" id="linkUrl" placeholder="e.g. /category/smart-tv" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Sort Order</label>
+                            <input type="number" class="form-control" id="linkOrder" value="1">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveLink()">Save Link</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Sidebar Toggle Script
+        function toggleDropdown(menuId, btn) {
+            var dropdown = document.getElementById(menuId);
+            if (dropdown.style.display === "block") {
+                dropdown.style.display = "none";
+                btn.classList.remove("active");
+            } else {
+                dropdown.style.display = "block";
+                btn.classList.add("active");
+            }
+        }
+
+        // --- HEADER MANAGER LOGIC ---
+
+        // 1. Data Structure
+        let menuItems = [
+            { id: 1, name: "Home", url: "/", order: 1 },
+            { id: 2, name: "Shop All", url: "/shop", order: 2 },
+            { id: 3, name: "Brands", url: "/brands", order: 3 },
+            { id: 4, name: "Support", url: "/contact", order: 4 }
+        ];
+
+        // 2. Render Functions
+        function renderMenuTable() {
+            const tbody = document.getElementById('menuTableBody');
+            tbody.innerHTML = "";
+            
+            // Sort by Order
+            menuItems.sort((a, b) => a.order - b.order);
+
+            menuItems.forEach(item => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><span class="badge bg-light text-dark border">${item.order}</span></td>
+                        <td class="fw-bold">${item.name}</td>
+                        <td class="text-muted small"><code>${item.url}</code></td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-light border px-2" onclick="editLink(${item.id})"><i class="fas fa-pen text-primary"></i></button>
+                            <button class="btn btn-sm btn-light border px-2 text-danger" onclick="deleteLink(${item.id})"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            updatePreview();
+        }
+
+        // 3. Modal Logic
+        const linkModal = new bootstrap.Modal(document.getElementById('linkModal'));
+
+        function openLinkModal() {
+            document.getElementById('linkForm').reset();
+            document.getElementById('editId').value = "";
+            document.getElementById('modalTitle').innerText = "Add Menu Link";
+            linkModal.show();
+        }
+
+        function editLink(id) {
+            const item = menuItems.find(x => x.id === id);
+            document.getElementById('editId').value = item.id;
+            document.getElementById('linkName').value = item.name;
+            document.getElementById('linkUrl').value = item.url;
+            document.getElementById('linkOrder').value = item.order;
+            document.getElementById('modalTitle').innerText = "Edit Menu Link";
+            linkModal.show();
+        }
+
+        function saveLink() {
+            const id = document.getElementById('editId').value;
+            const name = document.getElementById('linkName').value;
+            const url = document.getElementById('linkUrl').value;
+            const order = parseInt(document.getElementById('linkOrder').value);
+
+            if(id) {
+                const index = menuItems.findIndex(x => x.id == id);
+                menuItems[index] = { id: parseInt(id), name, url, order };
+            } else {
+                menuItems.push({ id: Date.now(), name, url, order });
+            }
+            linkModal.hide();
+            renderMenuTable();
+        }
+
+        function deleteLink(id) {
+            if(confirm("Remove this link?")) {
+                menuItems = menuItems.filter(x => x.id !== id);
+                renderMenuTable();
+            }
+        }
+
+        // 4. PREVIEW LOGIC
+        function updatePreview() {
+            // Top Bar
+            const showTop = document.getElementById('topBarShow').checked;
+            const topText = document.getElementById('topBarText').value;
+            const topBg = document.getElementById('topBarBg').value;
+            const topColor = document.getElementById('topBarColor').value;
+            
+            const feTopBar = document.getElementById('fe-topbar');
+            
+            if(showTop) {
+                feTopBar.style.display = "block";
+                feTopBar.innerText = topText;
+                feTopBar.style.backgroundColor = topBg;
+                feTopBar.style.color = topColor;
+            } else {
+                feTopBar.style.display = "none";
+            }
+
+            // Menu Links
+            const feMenu = document.getElementById('fe-menu-container');
+            feMenu.innerHTML = "";
+            menuItems.forEach(item => {
+                feMenu.innerHTML += `<a href="#" class="fe-nav-link">${item.name}</a>`;
+            });
+        }
+
+        // 5. Logo Upload Logic
+        document.getElementById('logoInput').addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Update Admin Preview
+                    document.getElementById('logoPreviewAdmin').src = e.target.result;
+                    // Update Live Preview
+                    document.getElementById('fe-logo').src = e.target.result;
+                }
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+
+        // Init
+        renderMenuTable(); // This also triggers updatePreview()
+
+    </script>
+</body>
+</html>
