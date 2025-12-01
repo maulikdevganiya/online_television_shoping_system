@@ -4,6 +4,7 @@ from django.contrib import messages
 from app.forms import CarouselForm
 # from app.middleware import admin_required
 from datetime import *
+from .models import Collection, CollectionProduct
 from app.models import Admin, Brand,Carousel,Product,ProductFeature
 from django.utils.timezone import now
 from decimal import Decimal
@@ -139,7 +140,54 @@ def add_product(request):
     return render(request, 'add_product.html', {'brands': brands})
 
 def admin_collections(request):
-    return render(request,"admin_collections.html" )
+    if "admin_id" not in request.session:
+        return redirect("admin_login")
+
+    collections = Collection.objects.all().order_by('-created_at')
+    products = Product.objects.all()
+
+    if request.method == "POST":
+        collection_id = request.POST.get('collection_id')
+        title = request.POST.get('title')
+        subtitle = request.POST.get('subtitle', '')
+        status = request.POST.get('status', 'Active')
+        selected_products = request.POST.getlist('products')
+
+        if collection_id:
+            # Edit existing collection
+            collection = get_object_or_404(Collection, id=collection_id)
+            collection.title = title
+            collection.subtitle = subtitle
+            collection.status = status
+            collection.save()
+
+            # Update products
+            CollectionProduct.objects.filter(collection=collection).delete()
+            for product_id in selected_products:
+                CollectionProduct.objects.create(collection=collection, product_id=product_id)
+
+            messages.success(request, "Collection updated successfully!")
+        else:
+            # Create new collection
+            collection = Collection.objects.create(
+                title=title,
+                subtitle=subtitle,
+                status=status
+            )
+
+            # Add products
+            for product_id in selected_products:
+                CollectionProduct.objects.create(collection=collection, product_id=product_id)
+
+            messages.success(request, "Collection created successfully!")
+
+        return redirect('admin_collections')
+
+    context = {
+        'collections': collections,
+        'products': products,
+    }
+    return render(request, "admin_collections.html", context)
 
 def admin_brands(request):
     if "admin_id" not in request.session:
@@ -291,5 +339,48 @@ def delete_product(request, id):
     product.delete()
     messages.success(request, "Product Deleted Successfully!")
     return redirect('product')
+
+def edit_collection(request, id):
+    if "admin_id" not in request.session:
+        return redirect("admin_login")
+
+    collection = get_object_or_404(Collection, id=id)
+    products = Product.objects.all()
+    selected_products = [cp.product.id for cp in collection.collection_products.all()]
+
+    if request.method == "POST":
+        title = request.POST.get('title')
+        subtitle = request.POST.get('subtitle', '')
+        status = request.POST.get('status', 'Active')
+        selected_products = request.POST.getlist('products')
+
+        collection.title = title
+        collection.subtitle = subtitle
+        collection.status = status
+        collection.save()
+
+        # Update products
+        CollectionProduct.objects.filter(collection=collection).delete()
+        for product_id in selected_products:
+            CollectionProduct.objects.create(collection=collection, product_id=product_id)
+
+        messages.success(request, "Collection updated successfully!")
+        return redirect('admin_collections')
+
+    context = {
+        'collection': collection,
+        'products': products,
+        'selected_products': selected_products,
+    }
+    return render(request, "admin_collections.html", context)
+
+def delete_collection(request, id):
+    if "admin_id" not in request.session:
+        return redirect("admin_login")
+
+    collection = get_object_or_404(Collection, id=id)
+    collection.delete()
+    messages.success(request, "Collection deleted successfully!")
+    return redirect('admin_collections')
 
 

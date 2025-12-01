@@ -1,175 +1,144 @@
-{% extends "base.html" %}
-{% load static %}
-
-  {% block content %}
+{% extends "base.html" %} {% load static %} {% block content %}
 <style>
-    /* Custom scrollbar for the info section */
-    .scrollbar-custom::-webkit-scrollbar {
-        width: 4px;
-        /* Scrollbar width */
-    }
+  /* Custom scrollbar for the info section */
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 4px;
+    /* Scrollbar width */
+  }
 
-    .scrollbar-custom::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        /* Scrollbar track color */
-        border-radius: 10px;
-    }
+  .scrollbar-custom::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    /* Scrollbar track color */
+    border-radius: 10px;
+  }
 
-    .scrollbar-custom::-webkit-scrollbar-thumb {
-        background: #6366f1;
-        /* Scrollbar thumb color (indigo-500) */
-        border-radius: 10px;
-    }
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    background: #6366f1;
+    /* Scrollbar thumb color (indigo-500) */
+    border-radius: 10px;
+  }
 
-    .scrollbar-custom::-webkit-scrollbar-thumb:hover {
-        background: #4f46e5;
-        /* Darker shade on hover (indigo-600) */
-    }
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background: #4f46e5;
+    /* Darker shade on hover (indigo-600) */
+  }
 </style>
 
 <body class="bg-gray-100">
+  <div class="flex bg-white h-[75vh] mx-20 overflow-hidden my-6">
+    <!-- images -->
+    <div
+      class="border sticky p-2 top-2 flex flex-col items-center justify-center rounded-lg m-6"
+    >
+      <div class="w-[300px] h-[300px]">
+        <img
+          id="mainImage"
+          src="{% if product.main_image %}{{ product.main_image.url }}{% else %}{% static 'images/product1.jpeg' %}{% endif %}"
+          alt="Main Product"
+          class="object-cover rounded-lg"
+        />
+      </div>
 
-    <div class="flex bg-white h-[75vh] mx-20 overflow-hidden my-6 ">
-        <!-- images -->
-        <div class="border  sticky p-2 top-2 flex flex-col items-center justify-center rounded-lg m-6 ">
-            <div class=" w-[300px] h-[300px]  ">
-                <img id="mainImage" src="product1.jpeg" alt="Main Product" class="object-cover rounded-lg ">
-            </div>
-
-            <!-- THUMBNAILS -->
-            <div class="flex space-x-3">
-                <img src="product1.jpeg" onclick="changeImage(this)"
-                    class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-indigo-500">
-                <img src="product1-2.jpeg" onclick="changeImage(this)"
-                    class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent ">
-                <img src="product1-3.jpeg" onclick="changeImage(this)"
-                    class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent ">
-                <img src="product1-4.jpeg" onclick="changeImage(this)"
-                    class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent ">
-                <img src="product1-5.jpeg" onclick="changeImage(this)"
-                    class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent ">
-            </div>
-        </div>
-        <!-- informtion -->
-        <div class="flex-1 overflow-y-auto px-4 scrollbar-custom">
-            <div class="flex py-4 pl-5 w-full flex-col border-l  ">
-                <p class="font-bold">Samsung 108 cm (43 inches) Crystal 4K Ultra HD Smart LED TV, UA43U8100FULXL, Black
-                </p>
-                <h2 class="text-2xl font-bold pt-2">₹32,230.00</h2>
-                <p class="text-sm text-gray-400 py-2 border-b ">MRP <span class="line-through">₹42,310.00</span> <span
-                        class="text-[#00b259] pl-2 ">24% OFF</span></p>
-                <div class="flex space-x-4 my-8 pb-6 border-b  ">
-                    <a href=""
-                        class="border-2 border-indigo-500 font-bold text-indigo-500  rounded-full py-2 px-12 hover:bg-gray-100">
-                        Add to Cart
-                    </a>
-                    <a href=""
-                        class="border-2 border-indigo-500 font-bold text-white bg-indigo-500 rounded-full py-2 px-12 hover:bg-indigo-700 ">
-                        Buy Now
-                    </a>
-                </div>
-                <div>
-                    <h3 class="font-bold">Key Features</h3>
-                    <ul class="list-disc pl-5">
-                        <li>Crystal Processor 4K</li>
-                        <li>Slim Look</li>
-                        <li>Samsung Knox Security</li>
-                        <li>Endless free content with Samsung Smart TV</li>
-                        <li>4K Upscaling</li>
-                    </ul>
-                </div>
-                <div class="mt-4">
-                    <h2 class="text-lg py-2 font-bold">Description</h2>
-                    <div class="flex mt-5 justify-between px-12 flex-wrap">
-                        <div
-                            class="bg-[#f7f7f7] h-[12rem] w-[12rem] p-8 rounded-lg flex flex-col items-center justify-center text-center">
-                            <img src="crystal-processor-4k.svg" class="h-[4rem]" alt="">
-                            <p class="text-lg text-gray-600">Crystal Processor 4K</p>
-                        </div>
-                        <div
-                            class="bg-[#f7f7f7] h-[12rem] w-[12rem] p-8 rounded-lg flex flex-col items-center justify-center text-center">
-                            <img src="content-free.svg" class="h-[4rem]" alt="">
-                            <p class="text-lg text-gray-600">Endless Free Content Samsung TV Plus</p>
-                        </div>
-                        <div
-                            class="bg-[#f7f7f7] h-[12rem] w-[12rem] p-8 rounded-lg flex flex-col items-center justify-center text-center">
-                            <img src="knox-security.svg" class="h-[4rem]" alt="">
-                            <p class="text-lg text-gray-600">Samsung Knox Security</p>
-                        </div>
-                    </div>
-                    <img src="discription-tv-2.webp" class="mt-8" alt="">
-                    <img src="description-tv.webp" alt="">
-                </div>
-            </div>
-        </div>
+      <!-- THUMBNAILS -->
+      <div class="flex space-x-3">
+        {% if product.main_image %}
+        <img
+          src="{{ product.main_image.url }}"
+          onclick="changeImage(this)"
+          class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-indigo-500"
+        />
+        {% endif %} {% if product.thumb_1 %}
+        <img
+          src="{{ product.thumb_1.url }}"
+          onclick="changeImage(this)"
+          class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent"
+        />
+        {% endif %} {% if product.thumb_2 %}
+        <img
+          src="{{ product.thumb_2.url }}"
+          onclick="changeImage(this)"
+          class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent"
+        />
+        {% endif %} {% if product.thumb_3 %}
+        <img
+          src="{{ product.thumb_3.url }}"
+          onclick="changeImage(this)"
+          class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent"
+        />
+        {% endif %} {% if product.thumb_4 %}
+        <img
+          src="{{ product.thumb_4.url }}"
+          onclick="changeImage(this)"
+          class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent"
+        />
+        {% endif %}
+      </div>
     </div>
-
-
-    <!-- footer -->
-
-    <section class="flex flex-col py-8 bg-white">
-
-        <div class="flex px-20 pb-6 justify-between  ">
-            <!-- about us -->
-            <div>
-                <h2 class="font-blod text-2xl pb-2">About Us</h2>
-                <p class="w-[15rem] text-gray-800 ">We're your trusted TV experts, providing quality TeleVision
-                    solutions for over 20 years.</p>
-            </div>
-
-            <!-- contact -->
-            <div>
-                <h2 class="font-blod text-2xl pb-2">Contact</h2>
-                <p class="text-gray-800">Email: info@TVshop.com</p>
-                <p class="text-gray-800">Phone: (123) 456-7890</p>
-                <p class="text-gray-800">Address: 123 Cool St, Chillville, TV 12345</p>
-            </div>
-            <!-- quick links -->
-            <div class="flex flex-col">
-                <h2 class="font-blod text-2xl pb-2">Quick Links</h2>
-                <a href="" class="hover:text-indigo-600 text-gray-800">Services</a>
-                <a href="" class="hover:text-indigo-600 text-gray-800">Products</a>
-                <a href="" class="hover:text-indigo-600 text-gray-800">FAQs</a>
-            </div>
-            <!-- follows us -->
-            <div>
-                <h2 class="font-blod text-2xl pb-2">Follow Us</h2>
-                <div class="flex space-x-4">
-                    <a href="" class="text-2xl hover:text-indigo-600"><i class="fab fa-facebook fs-4"></i></a>
-                    <a href="" class="text-2xl hover:text-indigo-600"><i class="fab fa-twitter fs-4"></i></a>
-                    <a href="" class="text-2xl hover:text-indigo-600"><i class="fab fa-instagram fs-4"></i></a>
-                </div>
-            </div>
+    <!-- informtion -->
+    <div class="flex-1 overflow-y-auto px-4 scrollbar-custom">
+      <div class="flex py-4 pl-5 w-full flex-col border-l">
+        <p class="font-bold">{{ product.title }}</p>
+        <h2 class="text-2xl font-bold pt-2">₹{{ product.final_price }}</h2>
+        <p class="text-sm text-gray-400 py-2 border-b">
+          MRP <span class="line-through">₹{{ product.original_price }}</span>
+          <span class="text-[#00b259] pl-2"
+            >{{ product.discount_percentage }}% OFF</span
+          >
+        </p>
+        <div class="flex space-x-4 my-8 pb-6 border-b">
+          <a
+            href=""
+            class="border-2 border-indigo-500 font-bold text-indigo-500 rounded-full py-2 px-12 hover:bg-gray-100"
+          >
+            Add to Cart
+          </a>
+          <a
+            href=""
+            class="border-2 border-indigo-500 font-bold text-white bg-indigo-500 rounded-full py-2 px-12 hover:bg-indigo-700"
+          >
+            Buy Now
+          </a>
         </div>
-
-        <!-- copyright section -->
-        <div class="flex justify-center item-center border-t py-4">
-            <p class="text-gray-800">© 2025 TeleMart Shop. All rights reserved.</p>
+        <div>
+          <h3 class="font-bold">Key Features</h3>
+          <ul class="list-disc pl-5">
+            {% for feature in features %}
+            <li>{{ feature.feature_text }}</li>
+            {% endfor %}
+          </ul>
         </div>
-    </section>
+        <div class="mt-4">
+          <h2 class="text-lg py-2 font-bold">Description</h2>
+          {{ product.description_html|safe }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- footer -->
 </body>
 <!-- IMAGE CHANGE SCRIPT -->
 <script>
-    // Select all thumbnails
-    const thumbnails = document.querySelectorAll(".thumbnail");
-    const mainImage = document.getElementById("mainImage");
+  // Select all thumbnails
+  const thumbnails = document.querySelectorAll(".thumbnail");
+  const mainImage = document.getElementById("mainImage");
 
-    thumbnails.forEach((thumb) => {
-        thumb.addEventListener("click", () => {
-            // Change main image
-            mainImage.src = thumb.src;
+  thumbnails.forEach((thumb) => {
+    thumb.addEventListener("click", () => {
+      // Change main image
+      mainImage.src = thumb.src;
 
-            // Remove border from all
-            thumbnails.forEach((img) => {
-                img.classList.remove("border-indigo-500");
-                img.classList.add("border-transparent");
-            });
+      // Remove border from all
+      thumbnails.forEach((img) => {
+        img.classList.remove("border-indigo-500");
+        img.classList.add("border-transparent");
+      });
 
-            // Add border to clicked
-            thumb.classList.remove("border-transparent");
-            thumb.classList.add("border-indigo-500");
-        });
+      // Add border to clicked
+      thumb.classList.remove("border-transparent");
+      thumb.classList.add("border-indigo-500");
     });
+  });
 </script>
 
 {%endblock%}

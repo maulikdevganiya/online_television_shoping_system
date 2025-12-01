@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.contrib.auth.hashers import check_password
 from .forms import RegisterForm
 from django.contrib import messages
-from .models import UserRegister,Brand,Carousel
+from .models import UserRegister,Brand,Carousel,Product,ProductFeature
 from django.views import View
 from django.shortcuts import get_object_or_404, render,redirect
 
@@ -72,8 +72,13 @@ def my_order(request):
     user = UserRegister.objects.get(id=request.session["user_id"])
     return render(request, "my_order.html", {"user": user, "active_page": "order"})
 
-def product_details(request):
-    return render(request, 'product_details.html')
+def product_details(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    features = product.features.all()
+    return render(request, 'product_details.html', {
+        'product': product,
+        'features': features
+    })
 
 def profile_sidebar(request):
     if "user_id" not in request.session:
