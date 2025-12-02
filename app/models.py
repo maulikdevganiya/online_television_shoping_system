@@ -167,6 +167,31 @@ class OrderItem(models.Model):
     def total_price(self):
         return self.price * self.quantity
 
+class Address(models.Model):
+    user = models.ForeignKey(UserRegister, on_delete=models.CASCADE, related_name='addresses')
+    full_name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=15)
+    address_line_1 = models.CharField(max_length=255)
+    address_line_2 = models.CharField(max_length=255, blank=True, null=True)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    pincode = models.CharField(max_length=10)
+    is_default = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.full_name} - {self.city}, {self.state}"
+
+    def save(self, *args, **kwargs):
+        # Ensure only one default address per user
+        if self.is_default:
+            Address.objects.filter(user=self.user, is_default=True).update(is_default=False)
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name_plural = "Addresses"
+
 class Payment(models.Model):
     PAYMENT_METHOD_CHOICES = (
         ('credit_card', 'Credit Card'),

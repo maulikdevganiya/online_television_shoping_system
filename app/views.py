@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.contrib.auth.hashers import check_password
 from .forms import RegisterForm
 from django.contrib import messages
-from .models import UserRegister,Brand,Carousel,Product,ProductFeature,Cart,CartItem,Order,OrderItem,Payment
+from .models import UserRegister,Brand,Carousel,Product,ProductFeature,Cart,CartItem,Order,OrderItem,Payment,Address
 from customadmin.models import Collection
 from django.views import View
 from django.shortcuts import get_object_or_404, render,redirect
@@ -71,7 +71,8 @@ def my_addrerss(request):
         return redirect("login")
 
     user = UserRegister.objects.get(id=request.session["user_id"])
-    return render(request, "my_addrerss.html", {"user": user, "active_page": "address"})
+    addresses = Address.objects.filter(user=user)
+    return render(request, "my_addrerss.html", {"user": user, "active_page": "address", "addresses": addresses})
 
 def my_cart(request):
     return render(request, 'my_cart.html')
@@ -262,6 +263,76 @@ def place_order(request):
         return redirect('order_confirmation', order_id=order.id)
 
     return redirect('checkout')
+
+def add_address(request):
+    if "user_id" not in request.session:
+        return redirect("login")
+
+    if request.method == 'POST':
+        user = UserRegister.objects.get(id=request.session["user_id"])
+
+        address = Address.objects.create(
+            user=user,
+            full_name=request.POST.get('full_name'),
+            phone=request.POST.get('phone'),
+            address_line_1=request.POST.get('address_line_1'),
+            address_line_2=request.POST.get('address_line_2'),
+            city=request.POST.get('city'),
+            state=request.POST.get('state'),
+            pincode=request.POST.get('pincode'),
+            is_default=request.POST.get('is_default') == 'on'
+        )
+
+        messages.success(request, "Address added successfully!")
+        return redirect('my_addrerss')
+
+    return render(request, 'add_address.html', {"active_page": "address"})
+
+def edit_address(request, address_id):
+    if "user_id" not in request.session:
+        return redirect("login")
+
+    user = UserRegister.objects.get(id=request.session["user_id"])
+    address = get_object_or_404(Address, id=address_id, user=user)
+
+    if request.method == 'POST':
+        address.full_name = request.POST.get('full_name')
+        address.phone = request.POST.get('phone')
+        address.address_line_1 = request.POST.get('address_line_1')
+        address.address_line_2 = request.POST.get('address_line_2')
+        address.city = request.POST.get('city')
+        address.state = request.POST.get('state')
+        address.pincode = request.POST.get('pincode')
+        address.is_default = request.POST.get('is_default') == 'on'
+        address.save()
+
+        messages.success(request, "Address updated successfully!")
+        return redirect('my_addrerss')
+
+    return render(request, 'edit_address.html', {"active_page": "address", "address": address})
+
+def delete_address(request, address_id):
+    if "user_id" not in request.session:
+        return redirect("login")
+
+    user = UserRegister.objects.get(id=request.session["user_id"])
+    address = get_object_or_404(Address, id=address_id, user=user)
+    address.delete()
+
+    messages.success(request, "Address deleted successfully!")
+    return redirect('my_addrerss')
+
+def set_default_address(request, address_id):
+    if "user_id" not in request.session:
+        return redirect("login")
+
+    user = UserRegister.objects.get(id=request.session["user_id"])
+    address = get_object_or_404(Address, id=address_id, user=user)
+    address.is_default = True
+    address.save()
+
+    messages.success(request, "Default address updated successfully!")
+    return redirect('my_addrerss')
 
 def order_confirmation(request, order_id):
     if "user_id" not in request.session:
