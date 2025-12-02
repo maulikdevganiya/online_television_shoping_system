@@ -16,6 +16,9 @@ class UserRegister(models.Model):
     last_name = models.CharField(max_length=150, blank=True, null=True)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=255)
+    date_of_birth = models.DateField(blank=True, null=True)
+    gender = models.CharField(max_length=10, choices=[('male', 'Male'), ('female', 'Female'), ('other', 'Other')], blank=True, null=True)
+    mobile_number = models.CharField(max_length=15, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):

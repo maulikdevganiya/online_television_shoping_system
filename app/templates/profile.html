@@ -1,65 +1,97 @@
-{%load static %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Profile</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-  </head>
+{% extends "base_home.html" %} {% load static %} {% block content %}
+<div class="bg-gray-50 min-h-screen">
+  <!-- Breadcrumb -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <nav class="flex" aria-label="Breadcrumb">
+      <ol class="flex items-center space-x-4">
+        <li>
+          <div>
+            <a
+              href="{% url 'index' %}"
+              class="text-gray-400 hover:text-gray-500"
+            >
+              <i class="fas fa-home"></i>
+              <span class="sr-only">Home</span>
+            </a>
+          </div>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <svg
+              class="flex-shrink-0 h-5 w-5 text-gray-400"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span class="ml-4 text-sm font-medium text-gray-500"
+              >My Profile</span
+            >
+          </div>
+        </li>
+      </ol>
+    </nav>
+  </div>
 
-  <body class="bg-gray-100">
-    <!-- Header -->
-
-    <!-- Breadcrumb -->
-    <div class="mx-40 mt-6">
-      <p class="text-sm">
-        <span
-          class="text-[#000093] font-bold hover:text-indigo-600 cursor-pointer"
-          ><a href="{% url 'index' %}">Home Page</a></span
-        >
-        <span class="text-gray-400 mx-1">></span>
-        <span class="text-gray-600 font-bold">My Account</span>
-      </p>
-    </div>
-
-    <!-- Main Section -->
-    <div class="mx-40 mt-4 flex gap-6">
+  <!-- Main Section -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+    <div class="flex gap-8">
       <!-- Sidebar -->
-      {%include 'profile_sidebar.html'%}
-      <!-- Profile Content -->
-      <div class="flex-1 flex-col">
-        <div class="font-bold my-4 text-2xl">
-          <h2>My Profile</h2>
+      {% include 'profile_sidebar.html' %}
+
+      <div class="flex-1">
+        <div class="mb-6">
+          <h1 class="text-3xl font-bold text-gray-900">My Profile</h1>
+          <p class="mt-2 text-sm text-gray-600">Manage your personal details</p>
         </div>
-        <section class="flex-1 bg-white rounded shadow p-1">
-          <div
-            class="flex px-4 bg-gray-100 h-16 justify-between items-center mb-4"
-          >
-            <h2 class="text-xl font-semibold">Personal Details</h2>
-            <a href="#" class="text-indigo-600 hover:underline">Edit Profile</a>
+
+        {% if messages %} {% for message in messages %}
+        <div
+          class="mb-4 p-4 rounded {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}"
+        >
+          {{ message }}
+        </div>
+        {% endfor %} {% endif %}
+
+        <div class="bg-white rounded-lg shadow p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-semibold">Personal Details</h3>
+            <a
+              href="{% url 'edit_profile' %}"
+              class="text-indigo-600 hover:underline"
+            >
+              Edit Profile
+            </a>
           </div>
 
-          <div class="grid px-4 pb-4 grid-cols-2 gap-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label class="text-sm text-gray-500">First Name</label>
               <p class="font-medium">{{ user.name }}</p>
             </div>
             <div>
               <label class="text-sm text-gray-500">Last Name</label>
-              <p class="font-medium">Devganiya</p>
+              <p class="font-medium">
+                {{ user.last_name|default:"Not specified" }}
+              </p>
             </div>
             <div>
               <label class="text-sm text-gray-500">Date Of Birth</label>
-              <p class="font-medium">DD/MM/YYYY</p>
+              <p class="font-medium">
+                {{ user.date_of_birth|date:"d/m/Y"|default:"Not specified" }}
+              </p>
             </div>
             <div>
               <label class="text-sm text-gray-500">Gender</label>
-              <p class="font-medium text-gray-400">Not specified</p>
+              <p class="font-medium">
+                {{ user.get_gender_display|default:"Not specified" }}
+              </p>
             </div>
             <div>
               <label class="text-sm text-gray-500">Email Address</label>
@@ -67,11 +99,14 @@
             </div>
             <div>
               <label class="text-sm text-gray-500">Mobile Number</label>
-              <p class="font-medium">6353531011</p>
+              <p class="font-medium">
+                {{ user.mobile_number|default:"Not specified" }}
+              </p>
             </div>
           </div>
-        </section>
+        </div>
       </div>
     </div>
-  </body>
-</html>
+  </div>
+  {% endblock %}
+</div>

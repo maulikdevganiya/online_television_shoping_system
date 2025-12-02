@@ -1,0 +1,189 @@
+{% extends "base_home.html" %} {% load static %} {% block content %}
+<div class="bg-gray-50 min-h-screen">
+  <!-- Breadcrumb -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <nav class="flex" aria-label="Breadcrumb">
+      <ol class="flex items-center space-x-4">
+        <li>
+          <div>
+            <a
+              href="{% url 'index' %}"
+              class="text-gray-400 hover:text-gray-500"
+            >
+              <i class="fas fa-home"></i>
+              <span class="sr-only">Home</span>
+            </a>
+          </div>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <svg
+              class="flex-shrink-0 h-5 w-5 text-gray-400"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <a
+              href="{% url 'profile' %}"
+              class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+              >My Profile</a
+            >
+          </div>
+        </li>
+        <li>
+          <div class="flex items-center">
+            <svg
+              class="flex-shrink-0 h-5 w-5 text-gray-400"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span class="ml-4 text-sm font-medium text-gray-500"
+              >Edit Profile</span
+            >
+          </div>
+        </li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Main Section -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+    <div class="flex gap-8">
+      <!-- Sidebar -->
+      {% include 'profile_sidebar.html' %}
+
+      <div class="flex-1">
+        <div class="flex justify-between items-center my-4">
+          <h2 class="text-2xl font-bold">Edit Profile</h2>
+        </div>
+
+        {% if messages %} {% for message in messages %}
+        <div
+          class="mb-4 p-4 rounded {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}"
+        >
+          {{ message }}
+        </div>
+        {% endfor %} {% endif %}
+
+        <div class="bg-white rounded-lg shadow p-6">
+          <form method="post" class="space-y-4">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="{{ form.name.id_for_label }}"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >First Name *</label
+                >
+                {{ form.name }} {% if form.name.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                  {% for error in form.name.errors %}{{ error }}{% endfor %}
+                </div>
+                {% endif %}
+              </div>
+
+              <div>
+                <label
+                  for="{{ form.last_name.id_for_label }}"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Last Name *</label
+                >
+                {{ form.last_name }} {% if form.last_name.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                  {% for error in form.last_name.errors %}{{ error }}{% endfor %}
+                </div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div>
+              <label
+                for="{{ form.email.id_for_label }}"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Email Address *</label
+              >
+              {{ form.email }} {% if form.email.errors %}
+              <div class="text-red-500 text-sm mt-1">
+                {% for error in form.email.errors %}{{ error }}{% endfor %}
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="{{ form.date_of_birth.id_for_label }}"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Date of Birth</label
+                >
+                {{ form.date_of_birth }} {% if form.date_of_birth.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                  {% for error in form.date_of_birth.errors %}{{ error }}{% endfor %}
+                </div>
+                {% endif %}
+              </div>
+
+              <div>
+                <label
+                  for="{{ form.gender.id_for_label }}"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Gender</label
+                >
+                {{ form.gender }} {% if form.gender.errors %}
+                <div class="text-red-500 text-sm mt-1">
+                  {% for error in form.gender.errors %}{{ error }}{% endfor %}
+                </div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div>
+                <label
+                  for="{{ form.mobile_number.id_for_label }}"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Mobile Number</label
+                >
+              {{ form.mobile_number }} {% if form.mobile_number.errors %}
+              <div class="text-red-500 text-sm mt-1">
+                {% for error in form.mobile_number.errors %}{{ error }}{% endfor %}
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="flex gap-4 pt-4">
+              <button
+                type="submit"
+                class="bg-[#0a2885] text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+              >
+                <i class="fas fa-save mr-2"></i>Update Profile
+              </button>
+              <a
+                href="{% url 'profile' %}"
+                class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600"
+              >
+                <i class="fas fa-times mr-2"></i>Cancel
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -21,6 +21,7 @@ urlpatterns = [
     path('my_order', views.my_order, name="my_order" ),
     path('product_details/<int:product_id>/', views.product_details, name="product_details" ),
     path('profile', views.profile, name="profile" ),
+    path('edit_profile', views.edit_profile, name="edit_profile" ),
     path('profile_sidebar', views.profile_sidebar, name="profile_sidebar" ),
     path('registration', views.registration, name="registration" ),
     path('about_us', views.about_us, name="about_us" ),

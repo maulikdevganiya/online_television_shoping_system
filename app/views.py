@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.hashers import check_password
-from .forms import RegisterForm
+from .forms import RegisterForm, EditProfileForm
 from django.contrib import messages
 from .models import UserRegister,Brand,Carousel,Product,ProductFeature,Cart,CartItem,Order,OrderItem,Payment,Address
 from customadmin.models import Collection
@@ -182,6 +182,26 @@ def profile(request):
     user = UserRegister.objects.get(id=request.session["user_id"])
     return render(request, "profile.html", {"user": user, "active_page": "profile"})
 
+def edit_profile(request):
+    if "user_id" not in request.session:
+        return redirect("login")
+
+    user = UserRegister.objects.get(id=request.session["user_id"])
+
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('profile')
+    else:
+        form = EditProfileForm(instance=user)
+
+    return render(request, 'edit_profile.html', {
+        'form': form,
+        'user': user,
+        'active_page': 'profile'
+    })
 
 def registration(request):
     if request.method == "POST":
