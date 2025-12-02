@@ -151,7 +151,8 @@ def my_order(request):
         return redirect("login")
 
     user = UserRegister.objects.get(id=request.session["user_id"])
-    return render(request, "my_order.html", {"user": user, "active_page": "order"})
+    orders = Order.objects.filter(user=user).select_related('payment').order_by('-created_at')
+    return render(request, "my_order.html", {"user": user, "active_page": "order", "orders": orders})
 
 def product_details(request, product_id):
     product = get_object_or_404(Product, id=product_id)
