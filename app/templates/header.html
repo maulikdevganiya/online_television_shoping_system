@@ -42,10 +42,10 @@
                     <button class="text-gray-600 hover:text-indigo-600 transition">
                         <i class="fas fa-heart text-xl"></i>
                     </button></a>
-                    <a href="{% if request.session.user_id%}{% url 'my_cart'  %}{% else %}{% url 'login' %}{% endif %}">
+                    <a href="{% if request.session.user_id%}{% url 'my_cart2'  %}{% else %}{% url 'login' %}{% endif %}">
                     <button class="relative text-gray-600 hover:text-indigo-600 transition">
                         <i class="fas fa-shopping-cart text-xl"></i>
-                        {% if request.session.user_id%}<span class="absolute -top-2 -right-2 bg-red-500 rounded-full h-5 w-5 text-white text-xs flex items-center justify-center">0</span>{% else %}{% endif %}
+                        {% if request.session.user_id%}<span class="absolute -top-2 -right-2 bg-red-500 rounded-full h-5 w-5 text-white text-xs flex items-center justify-center">{{ total_items }}</span>{% else %}{% endif %}
                     </button></a>
                 </div>
             </div>

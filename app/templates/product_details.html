@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% load static %} {% block content %}
+{% extends "base_home.html" %} {% load static %} {% block content %}
 <style>
   /* Custom scrollbar for the info section */
   .scrollbar-custom::-webkit-scrollbar {
@@ -87,7 +87,7 @@
         </p>
         <div class="flex space-x-4 my-8 pb-6 border-b">
           <a
-            href=""
+            href="{% url 'add_to_cart' product.id %}"
             class="border-2 border-indigo-500 font-bold text-indigo-500 rounded-full py-2 px-12 hover:bg-gray-100"
           >
             Add to Cart
