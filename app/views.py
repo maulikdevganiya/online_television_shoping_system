@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.contrib.auth.hashers import check_password
 from .forms import RegisterForm
 from django.contrib import messages
-from .models import UserRegister,Brand,Carousel,Product,ProductFeature,Cart,CartItem
+from .models import UserRegister,Brand,Carousel,Product,ProductFeature,Cart,CartItem,Order,OrderItem,Payment
 from customadmin.models import Collection
 from django.views import View
 from django.shortcuts import get_object_or_404, render,redirect
@@ -198,3 +198,78 @@ def registration(request):
 def logout_view(request):
     request.session.flush()
     return redirect("index")
+
+def checkout(request):
+    if "user_id" not in request.session:
+        return redirect("login")
+
+    user = UserRegister.objects.get(id=request.session["user_id"])
+    cart, created = Cart.objects.get_or_create(user=user)
+    cart_items = cart.cart_items.all()
+
+    total_price = cart.total_price
+    total_items = cart.total_items
+
+    return render(request, 'checkout.html', {
+        'cart_items': cart_items,
+        'total_price': total_price,
+        'total_items': total_items,
+        'user': user
+    })
+
+def place_order(request):
+    if "user_id" not in request.session:
+        return redirect("login")
+
+    if request.method == 'POST':
+        user = UserRegister.objects.get(id=request.session["user_id"])
+        cart = Cart.objects.get(user=user)
+        cart_items = cart.cart_items.all()
+
+        # Create order
+        import uuid
+        order_number = str(uuid.uuid4())[:8].upper()
+        order = Order.objects.create(
+            user=user,
+            order_number=order_number,
+            total_amount=cart.total_price,
+            shipping_address=request.POST.get('address'),
+            billing_address=request.POST.get('address'),  # Same as shipping for now
+            phone=request.POST.get('phone'),
+            email=request.POST.get('email')
+        )
+
+        # Create order items
+        for item in cart_items:
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity,
+                price=item.product.final_price
+            )
+
+        # Create payment
+        Payment.objects.create(
+            order=order,
+            payment_method=request.POST.get('payment_method'),
+            amount=cart.total_price
+        )
+
+        # Clear cart
+        cart.cart_items.all().delete()
+
+        return redirect('order_confirmation', order_id=order.id)
+
+    return redirect('checkout')
+
+def order_confirmation(request, order_id):
+    if "user_id" not in request.session:
+        return redirect("login")
+
+    user = UserRegister.objects.get(id=request.session["user_id"])
+    order = get_object_or_404(Order, id=order_id, user=user)
+
+    return render(request, 'order_confirmation.html', {
+        'order': order,
+        'user': user
+    })

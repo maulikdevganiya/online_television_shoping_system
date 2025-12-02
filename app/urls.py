@@ -25,6 +25,9 @@ urlpatterns = [
     path('registration', views.registration, name="registration" ),
     path('about_us', views.about_us, name="about_us" ),
     path('contact_us', views.contact_us, name="contact_us" ),
+    path('checkout', views.checkout, name="checkout" ),
+    path('place_order', views.place_order, name="place_order" ),
+    path('order_confirmation/<int:order_id>/', views.order_confirmation, name="order_confirmation" ),
     path("logout/", views.logout_view, name="logout"),
 
 ]

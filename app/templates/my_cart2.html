@@ -104,11 +104,12 @@
             <span>₹{{ total_price }}</span>
           </div>
         </div>
-        <button
-          class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200"
+        <a
+          href="{% url 'checkout' %}"
+          class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 inline-block text-center"
         >
           Proceed to Checkout
-        </button>
+        </a>
       </div>
     </div>
   </div>

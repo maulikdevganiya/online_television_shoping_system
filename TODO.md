@@ -1,0 +1,7 @@
+- [x] Add Order, OrderItem, and Payment models to models.py
+- [x] Create and run migrations for new models
+- [x] Create checkout view in views.py
+- [x] Create checkout.html template with professional design
+- [x] Update urls.py to include checkout URL
+- [x] Add checkout link/button in cart page
+- [x] Test full checkout functionality
