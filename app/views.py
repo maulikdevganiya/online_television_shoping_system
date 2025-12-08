@@ -66,13 +66,13 @@ def contact_us(request):
 def footer(request):
     return render(request,"footer.html")
 
-def my_addrerss(request):
+def my_address(request):
     if "user_id" not in request.session:
         return redirect("login")
 
     user = UserRegister.objects.get(id=request.session["user_id"])
     addresses = Address.objects.filter(user=user)
-    return render(request, "my_addrerss.html", {"user": user, "active_page": "address", "addresses": addresses})
+    return render(request, "my_address.html", {"user": user, "active_page": "address", "addresses": addresses})
 
 def my_cart(request):
     return render(request, 'my_cart.html')
@@ -221,23 +221,30 @@ def logout_view(request):
     request.session.flush()
     return redirect("index")
 
+
 def checkout(request):
     if "user_id" not in request.session:
         return redirect("login")
 
     user = UserRegister.objects.get(id=request.session["user_id"])
-    cart, created = Cart.objects.get_or_create(user=user)
+    cart, _ = Cart.objects.get_or_create(user=user)
     cart_items = cart.cart_items.all()
-
     total_price = cart.total_price
     total_items = cart.total_items
+    addresses = Address.objects.filter(user=user)
+    default_address = Address.objects.filter(user=user, is_default=True).first()
 
     return render(request, 'checkout.html', {
         'cart_items': cart_items,
         'total_price': total_price,
         'total_items': total_items,
-        'user': user
+        'user': user,
+        'addresses': addresses,
+        'default_address': default_address,
     })
+
+
+
 
 def place_order(request):
     if "user_id" not in request.session:
@@ -248,6 +255,25 @@ def place_order(request):
         cart = Cart.objects.get(user=user)
         cart_items = cart.cart_items.all()
 
+        # Get selected shipping address
+        shipping_address_id = request.POST.get('shipping_address')
+        if not shipping_address_id:
+            messages.error(request, "Please select a shipping address.")
+            return redirect('checkout')
+
+        try:
+            selected_address = Address.objects.get(id=shipping_address_id, user=user)
+        except Address.DoesNotExist:
+            messages.error(request, "Invalid shipping address selected.")
+            return redirect('checkout')
+
+        # Build shipping address from selected address
+        shipping_address = f"{selected_address.full_name}, {selected_address.address_line_1}"
+        if selected_address.address_line_2:
+            shipping_address += f", {selected_address.address_line_2}"
+        shipping_address += f", {selected_address.city}, {selected_address.state}, {selected_address.pincode}"
+        phone = selected_address.phone
+
         # Create order
         import uuid
         order_number = str(uuid.uuid4())[:8].upper()
@@ -255,9 +281,9 @@ def place_order(request):
             user=user,
             order_number=order_number,
             total_amount=cart.total_price,
-            shipping_address=request.POST.get('address'),
-            billing_address=request.POST.get('address'),  # Same as shipping for now
-            phone=request.POST.get('phone'),
+            shipping_address=shipping_address,
+            billing_address=shipping_address,  # Same as shipping for now
+            phone=phone,
             email=request.POST.get('email')
         )
 
@@ -270,10 +296,21 @@ def place_order(request):
                 price=item.product.final_price
             )
 
-        # Create payment
+        # Create payment with appropriate status based on payment method
+        payment_method = request.POST.get('payment_method')
+        if payment_method in ['credit_card', 'debit_card', 'paypal']:
+            # For online payments, set status to completed (assuming payment gateway success)
+            payment_status = 'completed'
+        elif payment_method == 'cash_on_delivery':
+            # For COD, set status to pending until delivery
+            payment_status = 'pending'
+        else:
+            payment_status = 'pending'
+
         Payment.objects.create(
             order=order,
-            payment_method=request.POST.get('payment_method'),
+            payment_method=payment_method,
+            payment_status=payment_status,
             amount=cart.total_price
         )
 
@@ -304,7 +341,7 @@ def add_address(request):
         )
 
         messages.success(request, "Address added successfully!")
-        return redirect('my_addrerss')
+        return redirect('my_address')
 
     return render(request, 'add_address.html', {"active_page": "address"})
 
@@ -327,7 +364,7 @@ def edit_address(request, address_id):
         address.save()
 
         messages.success(request, "Address updated successfully!")
-        return redirect('my_addrerss')
+        return redirect('my_address')
 
     return render(request, 'edit_address.html', {"active_page": "address", "address": address})
 
@@ -340,7 +377,7 @@ def delete_address(request, address_id):
     address.delete()
 
     messages.success(request, "Address deleted successfully!")
-    return redirect('my_addrerss')
+    return redirect('my_address')
 
 def set_default_address(request, address_id):
     if "user_id" not in request.session:
@@ -352,7 +389,7 @@ def set_default_address(request, address_id):
     address.save()
 
     messages.success(request, "Default address updated successfully!")
-    return redirect('my_addrerss')
+    return redirect('my_address')
 
 def order_confirmation(request, order_id):
     if "user_id" not in request.session:
@@ -365,3 +402,88 @@ def order_confirmation(request, order_id):
         'order': order,
         'user': user
     })
+
+def payment_success(request):
+    """
+    Handle successful payment callback from payment gateway (PayPal, Stripe, etc.)
+    """
+    if request.method == 'POST' or request.method == 'GET':
+        # Get payment details from request parameters
+        payment_id = request.GET.get('payment_id') or request.POST.get('payment_id')
+        order_id = request.GET.get('order_id') or request.POST.get('order_id')
+        transaction_id = request.GET.get('transaction_id') or request.POST.get('transaction_id')
+
+        if order_id:
+            try:
+                order = Order.objects.get(id=order_id)
+                payment = Payment.objects.get(order=order)
+
+                # Update payment status to completed
+                payment.payment_status = 'completed'
+                if transaction_id:
+                    payment.transaction_id = transaction_id
+                payment.save()
+
+                # Update order status if needed
+                if order.status == 'pending':
+                    order.status = 'processing'
+                    order.save()
+
+                messages.success(request, "Payment completed successfully!")
+                return redirect('order_confirmation', order_id=order.id)
+
+            except (Order.DoesNotExist, Payment.DoesNotExist):
+                messages.error(request, "Payment verification failed. Please contact support.")
+                return redirect('index')
+
+    messages.error(request, "Invalid payment callback.")
+    return redirect('index')
+
+def payment_failure(request):
+    """
+    Handle failed payment callback from payment gateway
+    """
+    if request.method == 'POST' or request.method == 'GET':
+        order_id = request.GET.get('order_id') or request.POST.get('order_id')
+
+        if order_id:
+            try:
+                order = Order.objects.get(id=order_id)
+                payment = Payment.objects.get(order=order)
+
+                # Update payment status to failed
+                payment.payment_status = 'failed'
+                payment.save()
+
+                messages.error(request, "Payment failed. Please try again or choose a different payment method.")
+                return redirect('checkout')
+
+            except (Order.DoesNotExist, Payment.DoesNotExist):
+                messages.error(request, "Payment verification failed.")
+                return redirect('index')
+
+    messages.error(request, "Payment failed.")
+    return redirect('index')
+
+def payment_cancel(request):
+    """
+    Handle payment cancellation by user
+    """
+    order_id = request.GET.get('order_id')
+    if order_id:
+        try:
+            order = Order.objects.get(id=order_id)
+            payment = Payment.objects.get(order=order)
+
+            # Update payment status to cancelled
+            payment.payment_status = 'cancelled'
+            payment.save()
+
+            messages.warning(request, "Payment was cancelled.")
+            return redirect('checkout')
+
+        except (Order.DoesNotExist, Payment.DoesNotExist):
+            pass
+
+    messages.warning(request, "Payment cancelled.")
+    return redirect('checkout')

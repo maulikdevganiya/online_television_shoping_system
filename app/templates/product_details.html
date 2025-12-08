@@ -1,144 +1,199 @@
-{% extends "base_home.html" %} {% load static %} {% block content %}
-<style>
-  /* Custom scrollbar for the info section */
-  .scrollbar-custom::-webkit-scrollbar {
-    width: 4px;
-    /* Scrollbar width */
-  }
+{% extends "base_home.html" %} 
+{% load static %} 
 
-  .scrollbar-custom::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    /* Scrollbar track color */
-    border-radius: 10px;
-  }
+{% block content %}
 
-  .scrollbar-custom::-webkit-scrollbar-thumb {
-    background: #6366f1;
-    /* Scrollbar thumb color (indigo-500) */
-    border-radius: 10px;
-  }
+<body class="bg-gray-50 font-sans text-gray-800 antialiased">
 
-  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
-    background: #4f46e5;
-    /* Darker shade on hover (indigo-600) */
-  }
-</style>
-
-<body class="bg-gray-100">
-  <div class="flex bg-white h-[75vh] mx-20 overflow-hidden my-6">
-    <!-- images -->
-    <div
-      class="border sticky p-2 top-2 flex flex-col items-center justify-center rounded-lg m-6"
-    >
-      <div class="w-[300px] h-[300px]">
-        <img
-          id="mainImage"
-          src="{% if product.main_image %}{{ product.main_image.url }}{% else %}{% static 'images/product1.jpeg' %}{% endif %}"
-          alt="Main Product"
-          class="object-cover rounded-lg"
-        />
-      </div>
-
-      <!-- THUMBNAILS -->
-      <div class="flex space-x-3">
-        {% if product.main_image %}
-        <img
-          src="{{ product.main_image.url }}"
-          onclick="changeImage(this)"
-          class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-indigo-500"
-        />
-        {% endif %} {% if product.thumb_1 %}
-        <img
-          src="{{ product.thumb_1.url }}"
-          onclick="changeImage(this)"
-          class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent"
-        />
-        {% endif %} {% if product.thumb_2 %}
-        <img
-          src="{{ product.thumb_2.url }}"
-          onclick="changeImage(this)"
-          class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent"
-        />
-        {% endif %} {% if product.thumb_3 %}
-        <img
-          src="{{ product.thumb_3.url }}"
-          onclick="changeImage(this)"
-          class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent"
-        />
-        {% endif %} {% if product.thumb_4 %}
-        <img
-          src="{{ product.thumb_4.url }}"
-          onclick="changeImage(this)"
-          class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent"
-        />
-        {% endif %}
-      </div>
-    </div>
-    <!-- informtion -->
-    <div class="flex-1 overflow-y-auto px-4 scrollbar-custom">
-      <div class="flex py-4 pl-5 w-full flex-col border-l">
-        <p class="font-bold">{{ product.title }}</p>
-        <h2 class="text-2xl font-bold pt-2">₹{{ product.final_price }}</h2>
-        <p class="text-sm text-gray-400 py-2 border-b">
-          MRP <span class="line-through">₹{{ product.original_price }}</span>
-          <span class="text-[#00b259] pl-2"
-            >{{ product.discount_percentage }}% OFF</span
-          >
-        </p>
-        <div class="flex space-x-4 my-8 pb-6 border-b">
-          <a
-            href="{% url 'add_to_cart' product.id %}"
-            class="border-2 border-indigo-500 font-bold text-indigo-500 rounded-full py-2 px-12 hover:bg-gray-100"
-          >
-            Add to Cart
-          </a>
-          <a
-            href=""
-            class="border-2 border-indigo-500 font-bold text-white bg-indigo-500 rounded-full py-2 px-12 hover:bg-indigo-700"
-          >
-            Buy Now
-          </a>
-        </div>
-        <div>
-          <h3 class="font-bold">Key Features</h3>
-          <ul class="list-disc pl-5">
-            {% for feature in features %}
-            <li>{{ feature.feature_text }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-        <div class="mt-4">
-          <h2 class="text-lg py-2 font-bold">Description</h2>
-          {{ product.description_html|safe }}
-        </div>
-      </div>
-    </div>
+  <div class="bg-white border-b border-gray-200">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 text-sm text-gray-500">
+      <ol class="list-none p-0 inline-flex items-center">
+        <li class="flex items-center">
+          <a href="/" class="hover:text-indigo-600 transition">Home</a>
+          <i class="fas fa-chevron-right text-[10px] mx-2 text-gray-400"></i>
+        </li>
+        <li class="flex items-center">
+          <a href="#" class="hover:text-indigo-600 transition">Televisions</a>
+          <i class="fas fa-chevron-right text-[10px] mx-2 text-gray-400"></i>
+        </li>
+        <li class="font-medium text-gray-900 truncate max-w-[200px] sm:max-w-none">{{ product.title }}</li>
+      </ol>
+    </nav>
   </div>
 
-  <!-- footer -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="lg:grid lg:grid-cols-12 lg:gap-x-12 lg:items-start">
+      
+      <div class="lg:col-span-5 flex flex-col-reverse lg:sticky lg:top-24">
+        
+        <div class="mt-4 w-full max-w-md mx-auto">
+          <div class="grid grid-cols-5 gap-3">
+            {% if product.main_image %}
+            <button onclick="changeImage(this, '{{ product.main_image.url }}')" class="thumbnail-btn relative aspect-square cursor-pointer rounded-lg bg-white border-2 border-indigo-600 hover:border-indigo-600 transition overflow-hidden p-1">
+              <img src="{{ product.main_image.url }}" class="h-full w-full object-contain">
+            </button>
+            {% endif %}
+
+            {% if product.thumb_1 %}
+            <button onclick="changeImage(this, '{{ product.thumb_1.url }}')" class="thumbnail-btn relative aspect-square cursor-pointer rounded-lg bg-white border-2 border-transparent hover:border-indigo-300 transition overflow-hidden p-1">
+              <img src="{{ product.thumb_1.url }}" class="h-full w-full object-contain">
+            </button>
+            {% endif %}
+
+            {% if product.thumb_2 %}
+            <button onclick="changeImage(this, '{{ product.thumb_2.url }}')" class="thumbnail-btn relative aspect-square cursor-pointer rounded-lg bg-white border-2 border-transparent hover:border-indigo-300 transition overflow-hidden p-1">
+              <img src="{{ product.thumb_2.url }}" class="h-full w-full object-contain">
+            </button>
+            {% endif %}
+
+            {% if product.thumb_3 %}
+            <button onclick="changeImage(this, '{{ product.thumb_3.url }}')" class="thumbnail-btn relative aspect-square cursor-pointer rounded-lg bg-white border-2 border-transparent hover:border-indigo-300 transition overflow-hidden p-1">
+              <img src="{{ product.thumb_3.url }}" class="h-full w-full object-contain">
+            </button>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="w-full aspect-[4/3] bg-white rounded-2xl border border-gray-200 flex items-center justify-center overflow-hidden p-6 relative group shadow-sm">
+          <img id="mainImage" src="{{ product.main_image.url }}" alt="{{ product.title }}" class="max-w-full max-h-full object-contain transition duration-500 group-hover:scale-105">
+          
+          {% if product.discount_percentage > 0 %}
+          <div class="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm">
+            {{ product.discount_percentage }}% OFF
+          </div>
+          {% endif %}
+          
+          <button class="absolute top-4 left-4 w-9 h-9 rounded-full bg-gray-100 hover:bg-red-50 text-gray-400 hover:text-red-500 flex items-center justify-center transition">
+            <i class="far fa-heart"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 mt-10 lg:mt-0">
+        
+        <div class="border-b border-gray-100 pb-5">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight">{{ product.title }}</h1>
+            
+            <div class="mt-3 flex items-center gap-4">
+                <div class="flex items-center bg-green-600 text-white text-xs font-bold px-2 py-0.5 rounded gap-1">
+                    4.5 <i class="fas fa-star text-[10px]"></i>
+                </div>
+                <span class="text-sm text-gray-500 hover:text-indigo-600 cursor-pointer">1,234 Ratings & 117 Reviews</span>
+            </div>
+        </div>
+
+        <div class="py-5">
+            <div class="flex items-baseline gap-3">
+                <span class="text-4xl font-bold text-gray-900">₹{{ product.final_price }}</span>
+                <span class="text-lg text-gray-400 line-through">₹{{ product.original_price }}</span>
+                <span class="text-sm font-bold text-green-600 bg-green-50 px-2 py-1 rounded">Save ₹{{ product.discount_percentage }}%</span>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">Inclusive of all taxes</p>
+        </div>
+
+        <div class="mb-6">
+            <h3 class="text-sm font-bold text-gray-900 mb-2">Available Offers</h3>
+            <div class="space-y-2">
+                <div class="flex items-start gap-2 text-sm text-gray-700">
+                    <i class="fas fa-tag text-green-600 mt-1"></i>
+                    <span><strong>Bank Offer:</strong> 10% Instant Discount on HDFC Credit Cards.</span>
+                </div>
+                <div class="flex items-start gap-2 text-sm text-gray-700">
+                    <i class="fas fa-tag text-green-600 mt-1"></i>
+                    <span><strong>Partner Offer:</strong> Get Spotify Premium for 6 months free.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-4 mb-8">
+            <a href="" class="flex-1 bg-indigo-600 text-white font-bold text-lg py-3.5 px-6 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                <i class="fas fa-bolt"></i> Buy Now
+            </a>
+            <a href="{% url 'add_to_cart' product.id %}" class="flex-1 bg-white text-gray-900 border-2 border-gray-200 font-bold text-lg py-3.5 px-6 rounded-xl hover:border-indigo-600 hover:text-indigo-600 transition flex items-center justify-center gap-2">
+                <i class="fas fa-shopping-cart"></i> Add to Cart
+            </a>
+        </div>
+
+        <div class="grid grid-cols-4 gap-2 border border-gray-200 rounded-xl p-4 mb-8 bg-gray-50/50">
+            <div class="flex flex-col items-center text-center gap-1">
+                <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-indigo-600">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <span class="text-[10px] sm:text-xs font-semibold text-gray-600">1 Year Warranty</span>
+            </div>
+            <div class="flex flex-col items-center text-center gap-1">
+                <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-indigo-600">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <span class="text-[10px] sm:text-xs font-semibold text-gray-600">Free Delivery</span>
+            </div>
+            <div class="flex flex-col items-center text-center gap-1">
+                <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-indigo-600">
+                    <i class="fas fa-undo"></i>
+                </div>
+                <span class="text-[10px] sm:text-xs font-semibold text-gray-600">7 Days Return</span>
+            </div>
+            <div class="flex flex-col items-center text-center gap-1">
+                <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-indigo-600">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <span class="text-[10px] sm:text-xs font-semibold text-gray-600">24/7 Support</span>
+            </div>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+            <div class="bg-gray-50 px-5 py-3 border-b border-gray-200">
+                <h3 class="font-bold text-gray-900">Key Features</h3>
+            </div>
+            <div class="p-5">
+                <ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
+                    {% for feature in features %}
+                    <li class="flex items-start gap-2.5 text-sm text-gray-600">
+                        <i class="fas fa-check text-green-500 mt-1"></i>
+                        <span>{{ feature.feature_text }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="mt-12 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+            <h2 class="text-lg font-bold text-gray-900">Product Description</h2>
+        </div>
+        <div class="p-8 prose prose-indigo max-w-none text-gray-600">
+            {{ product.description_html|safe }}
+        </div>
+    </div>
+
+  </div>
+
+  <script>
+    function changeImage(element, src) {
+        const mainImage = document.getElementById('mainImage');
+        
+        // Add fade effect
+        mainImage.style.opacity = '0.5';
+        setTimeout(() => {
+            mainImage.src = src;
+            mainImage.style.opacity = '1';
+        }, 150);
+
+        // Reset borders
+        const buttons = document.querySelectorAll('.thumbnail-btn');
+        buttons.forEach(btn => {
+            btn.classList.remove('border-indigo-600');
+            btn.classList.add('border-transparent');
+        });
+
+        // Set active border
+        element.classList.remove('border-transparent');
+        element.classList.add('border-indigo-600');
+    }
+  </script>
+
 </body>
-<!-- IMAGE CHANGE SCRIPT -->
-<script>
-  // Select all thumbnails
-  const thumbnails = document.querySelectorAll(".thumbnail");
-  const mainImage = document.getElementById("mainImage");
-
-  thumbnails.forEach((thumb) => {
-    thumb.addEventListener("click", () => {
-      // Change main image
-      mainImage.src = thumb.src;
-
-      // Remove border from all
-      thumbnails.forEach((img) => {
-        img.classList.remove("border-indigo-500");
-        img.classList.add("border-transparent");
-      });
-
-      // Add border to clicked
-      thumb.classList.remove("border-transparent");
-      thumb.classList.add("border-indigo-500");
-    });
-  });
-</script>
-
-{%endblock%}
+{% endblock %}

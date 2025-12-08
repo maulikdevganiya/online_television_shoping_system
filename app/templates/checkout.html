@@ -1,149 +1,340 @@
-{% extends "base_home.html" %} {% load static %} {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <h1 class="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout – TeleMart</title>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    <!-- Checkout Form -->
-    <div class="bg-white shadow rounded-lg p-6">
-      <h2 class="text-xl font-semibold text-gray-900 mb-4">
-        Shipping Information
-      </h2>
-      <form method="post" action="{% url 'place_order' %}">
-        {% csrf_token %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-        <div class="mb-4">
-          <label for="name" class="block text-sm font-medium text-gray-700"
-            >Full Name</label
-          >
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value="{{ user.name }} {{ user.last_name }}"
-            required
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          />
+    <style>
+      body { font-family: "Inter", sans-serif; }
+      
+      .payment-details {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out, opacity 0.3s ease-in;
+        opacity: 0;
+      }
+      
+      input:checked ~ .payment-card-content {
+        border-color: #4f46e5;
+        background-color: #eef2ff;
+      }
+      
+      input:checked ~ .payment-card-content .check-circle {
+        background-color: #4f46e5;
+        border-color: #4f46e5;
+      }
+      
+      input:checked ~ .payment-card-content .check-circle i {
+        display: block;
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-50 text-gray-800">
+    
+    <header class="bg-white border-b sticky top-0 z-50 shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <a href="#" class="flex items-center gap-2">
+            <i class="fas fa-tv text-indigo-600 text-xl"></i>
+            <span class="text-2xl font-bold text-gray-900 tracking-tight">TeleMart</span>
+        </a>
+
+        <div class="hidden md:flex items-center space-x-6 text-sm font-medium">
+          <div class="flex items-center text-green-600">
+             <span class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-2 text-xs"><i class="fas fa-check"></i></span>
+             Cart
+          </div>
+          <div class="w-12 h-[1px] bg-gray-300"></div>
+          <div class="flex items-center text-indigo-600">
+            <span class="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center mr-2 text-xs">2</span>
+            Checkout
+         </div>
+         <div class="w-12 h-[1px] bg-gray-300"></div>
+          <span class="text-gray-400">Payment</span>
         </div>
 
-        <div class="mb-4">
-          <label for="email" class="block text-sm font-medium text-gray-700"
-            >Email</label
-          >
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value="{{ user.email }}"
-            required
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          />
+        <div class="flex items-center gap-2 text-xs font-medium text-green-700 bg-green-50 px-3 py-1.5 rounded-full">
+            <i class="fas fa-shield-alt"></i> 100% Secure
         </div>
+      </div>
+    </header>
 
-        <div class="mb-4">
-          <label for="phone" class="block text-sm font-medium text-gray-700"
-            >Phone</label
-          >
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            required
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          />
+    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <form
+        method="POST"
+        action="{% url 'place_order' %}"
+        class="lg:grid lg:grid-cols-12 lg:gap-x-10 lg:items-start"
+      >
+        {% csrf_token %} 
+        
+        {% if default_address %}
+        <input type="hidden" name="shipping_address" value="{{ default_address.id }}" />
+        {% endif %}
+
+        <div id="js-error-container" class="lg:col-span-12 mb-0"></div>
+
+        {% if messages %}
+        <div class="lg:col-span-12 mb-6">
+          {% for message in messages %}
+          <div class="flex items-center p-4 mb-4 text-sm rounded-lg {% if message.tags == 'error' %}bg-red-50 text-red-800 border border-red-200{% else %}bg-green-50 text-green-800 border border-green-200{% endif %}">
+            <i class="fas fa-info-circle mr-2"></i>
+            {{ message }}
+          </div>
+          {% endfor %}
         </div>
+        {% endif %}
 
-        <div class="mb-4">
-          <label for="address" class="block text-sm font-medium text-gray-700"
-            >Shipping Address</label
-          >
-          <textarea
-            id="address"
-            name="address"
-            rows="3"
-            required
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          ></textarea>
-        </div>
+        <div class="lg:col-span-8 space-y-6">
+          
+          <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <h2 class="text-lg font-bold text-gray-900 mb-5 flex items-center">
+              <span class="w-7 h-7 rounded-full bg-gray-900 text-white flex items-center justify-center text-sm mr-3">1</span>
+              Contact Details
+            </h2>
 
-        <div class="mb-6">
-          <label class="block text-sm font-medium text-gray-700 mb-2"
-            >Payment Method</label
-          >
-          <div class="space-y-2">
-            <div>
-              <input
-                type="radio"
-                id="cod"
-                name="payment_method"
-                value="cash_on_delivery"
-                checked
-              />
-              <label for="cod" class="ml-2">Cash on Delivery</label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Full Name</label>
+                <input type="text" name="name" required value="{{ user.first_name }} {{ user.last_name }}"
+                  class="w-full rounded-lg border-gray-300 border px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" placeholder="John Doe" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Phone Number</label>
+                <input type="tel" name="phone" required value="{% if default_address %}{{ default_address.phone }}{% endif %}"
+                  class="w-full rounded-lg border-gray-300 border px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" placeholder="+91 98765 43210" />
+              </div>
+              <div class="col-span-1 md:col-span-2">
+                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Email Address</label>
+                <input type="email" name="email" required value="{{ user.email }}"
+                  class="w-full rounded-lg border-gray-300 border px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" placeholder="john@example.com" />
+              </div>
             </div>
-            <div>
-              <input
-                type="radio"
-                id="card"
-                name="payment_method"
-                value="credit_card"
-              />
-              <label for="card" class="ml-2">Credit/Debit Card</label>
+          </div>
+
+          <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <h2 class="text-lg font-bold text-gray-900 mb-5 flex items-center">
+              <span class="w-7 h-7 rounded-full bg-gray-900 text-white flex items-center justify-center text-sm mr-3">2</span>
+              Delivery Address
+            </h2>
+
+            {% if default_address %}
+            <div class="relative group cursor-pointer">
+                <div class="p-5 border-2 border-indigo-600 bg-indigo-50/50 rounded-xl flex items-start justify-between">
+                    <div class="flex items-start gap-4">
+                        <div class="mt-1 text-indigo-600">
+                            <i class="fas fa-map-marker-alt text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-900">{{ default_address.full_name }} <span class="ml-2 text-[10px] bg-gray-200 text-gray-700 px-2 py-0.5 rounded uppercase">Home</span></h3>
+                            <p class="text-sm text-gray-600 mt-1 leading-relaxed">
+                                {{ default_address.address_line_1 }}{% if default_address.address_line_2 %}, {{ default_address.address_line_2 }}{% endif %}<br>
+                                {{ default_address.city }}, {{ default_address.state }} - <strong>{{ default_address.pincode }}</strong>
+                            </p>
+                            <p class="text-sm text-gray-700 mt-2"><i class="fas fa-phone mr-1 text-gray-400"></i> {{ default_address.phone }}</p>
+                        </div>
+                    </div>
+                    <a href="{% url 'my_address' %}" class="text-indigo-600 font-semibold text-sm hover:underline">Change</a>
+                </div>
             </div>
-            <div>
-              <input
-                type="radio"
-                id="paypal"
-                name="payment_method"
-                value="paypal"
-              />
-              <label for="paypal" class="ml-2">PayPal</label>
+            {% else %}
+            <div class="text-center p-8 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50">
+                <i class="fas fa-truck text-4xl text-gray-300 mb-3"></i>
+                <p class="text-gray-500 mb-4">No address selected for delivery.</p>
+                <a href="{% url 'my_address' %}" class="inline-flex items-center px-6 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition">
+                    <i class="fas fa-plus mr-2"></i> Add New Address
+                </a>
             </div>
+            {% endif %}
+          </div>
+
+          <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <div class="flex justify-between items-center mb-5">
+                <h2 class="text-lg font-bold text-gray-900 flex items-center">
+                    <span class="w-7 h-7 rounded-full bg-gray-900 text-white flex items-center justify-center text-sm mr-3">3</span>
+                    Payment Options
+                </h2>
+                <span class="text-xs text-gray-400"><i class="fas fa-lock mr-1"></i> Encrypted & Secure</span>
+            </div>
+
+            <div class="space-y-4">
+              
+                <label class="relative cursor-pointer group block">
+                    <input type="radio" name="payment_method" value="credit_card" class="peer sr-only">
+                    <div class="payment-card-content p-5 rounded-xl border border-gray-200 hover:border-indigo-300 transition-all duration-200 bg-white">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="check-circle w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center transition-colors">
+                                    <i class="fas fa-check text-white text-[10px] hidden"></i>
+                                </div>
+                                <div>
+                                    <span class="block font-bold text-gray-900">Credit / Debit Card</span>
+                                    <span class="text-xs text-gray-500">Safe money transfer using your bank account</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 opacity-80">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" class="h-5" alt="Visa">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" class="h-6" alt="Mastercard">
+                            </div>
+                        </div>
+                    </div>
+                </label>
+
+                <label class="relative cursor-pointer group block">
+                    <input type="radio" name="payment_method" value="paypal" class="peer sr-only">
+                    <div class="payment-card-content p-5 rounded-xl border border-gray-200 hover:border-indigo-300 transition-all duration-200 bg-white">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="check-circle w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center transition-colors">
+                                    <i class="fas fa-check text-white text-[10px] hidden"></i>
+                                </div>
+                                <div>
+                                    <span class="block font-bold text-gray-900">PayPal / Wallet</span>
+                                    <span class="text-xs text-gray-500">Pay via PayPal account</span>
+                                </div>
+                            </div>
+                            <i class="fab fa-paypal text-2xl text-blue-700"></i>
+                        </div>
+                    </div>
+                </label>
+
+                <label class="relative cursor-pointer group block">
+                    <input type="radio" name="payment_method" value="cash_on_delivery" checked class="peer sr-only">
+                    <div class="payment-card-content p-5 rounded-xl border border-gray-200 hover:border-indigo-300 transition-all duration-200 bg-white">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="check-circle w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center transition-colors">
+                                    <i class="fas fa-check text-white text-[10px] hidden"></i>
+                                </div>
+                                <div>
+                                    <span class="block font-bold text-gray-900">Cash on Delivery</span>
+                                    <span class="text-xs text-gray-500">Pay with cash upon delivery</span>
+                                </div>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                                <i class="fas fa-hand-holding-usd"></i>
+                            </div>
+                        </div>
+                    </div>
+                </label>
+
+            </div>
+          </div>
+          
+          <div class="hidden lg:block pt-4">
+            {% if default_address %}
+            <button type="submit" class="group relative w-full flex justify-center py-4 px-4 border border-transparent text-lg font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-lg shadow-indigo-200 transition-all duration-200">
+                Confirm Order & Pay ₹{{ total_price }}
+                <span class="absolute right-6 top-1/2 -translate-y-1/2 group-hover:translate-x-1 transition-transform">
+                    <i class="fas fa-arrow-right"></i>
+                </span>
+            </button>
+            <p class="text-center text-xs text-gray-500 mt-3">By placing this order, you agree to our Terms of Service.</p>
+            {% else %}
+            <button type="button" onclick="showAddressError()" class="group relative w-full flex justify-center py-4 px-4 border border-transparent text-lg font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all duration-200">
+                Confirm Order & Pay ₹{{ total_price }}
+            </button>
+            {% endif %}
           </div>
         </div>
 
-        <button
-          type="submit"
-          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200"
-        >
-          Place Order
-        </button>
+        <div class="lg:col-span-4 mt-10 lg:mt-0">
+          <div class="bg-white rounded-xl shadow-lg border border-gray-100 sticky top-24 overflow-hidden">
+            <div class="p-5 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+              <h2 class="text-lg font-bold text-gray-900">Order Summary</h2>
+              <span class="text-sm font-semibold text-gray-500">{{ cart_items.count }} Items</span>
+            </div>
+
+            <div class="p-5 max-h-[350px] overflow-y-auto space-y-5 custom-scrollbar">
+              {% for item in cart_items %}
+              <div class="flex gap-4">
+                <div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white p-1">
+                  <img src="{{ item.product.main_image.url }}" class="h-full w-full object-contain" alt="{{ item.product.title }}" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-sm font-semibold text-gray-800 line-clamp-2 leading-tight">{{ item.product.title }}</h3>
+                  <div class="flex items-center justify-between mt-2">
+                      <p class="text-xs text-gray-500">Qty: {{ item.quantity }}</p>
+                      <p class="text-sm font-bold text-gray-900">₹{{ item.total_price }}</p>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+
+            <div class="p-5 bg-gray-50/50 space-y-3 border-t border-gray-200">
+              <div class="flex justify-between text-sm text-gray-600">
+                <p>Subtotal</p>
+                <p class="font-medium text-gray-900">₹{{ total_price }}</p>
+              </div>
+              <div class="flex justify-between text-sm text-gray-600">
+                <p>Shipping</p>
+                <p class="text-green-600 font-bold">Free</p>
+              </div>
+              <div class="flex justify-between text-sm text-gray-600">
+                <p>Tax (Included)</p>
+                <p class="font-medium text-gray-900">₹0</p>
+              </div>
+              
+              <div class="border-t border-dashed border-gray-300 pt-4 mt-2 flex justify-between items-end">
+                <div>
+                    <p class="text-sm text-gray-500">Total Amount</p>
+                    <p class="text-xs text-green-600 font-medium">You saved ₹X,XXX</p>
+                </div>
+                <p class="text-2xl font-extrabold text-indigo-700 tracking-tight">₹{{ total_price }}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="lg:hidden mt-6 fixed bottom-0 left-0 w-full bg-white border-t p-4 z-40 shadow-[0_-5px_15px_rgba(0,0,0,0.1)]">
+             {% if default_address %}
+            <button type="submit" class="w-full bg-indigo-600 text-white text-lg font-bold py-3.5 rounded-xl shadow-md">
+                Pay ₹{{ total_price }}
+            </button>
+            {% else %}
+             <button type="button" onclick="showAddressError()" class="w-full bg-indigo-600 text-white text-lg font-bold py-3.5 rounded-xl shadow-md">
+                Pay ₹{{ total_price }}
+            </button>
+            {% endif %}
+          </div>
+        </div>
       </form>
     </div>
 
-    <!-- Order Summary -->
-    <div class="bg-white shadow rounded-lg p-6">
-      <h2 class="text-xl font-semibold text-gray-900 mb-4">Order Summary</h2>
-
-      <div class="space-y-4 mb-6">
-        {% for item in cart_items %}
-        <div class="flex items-center space-x-4 border-b border-gray-200 pb-4">
-          <img
-            src="{{ item.product.main_image.url }}"
-            alt="{{ item.product.title }}"
-            class="w-16 h-16 object-cover rounded-lg"
-          />
-          <div class="flex-1">
-            <h3 class="text-lg font-medium text-gray-900">
-              {{ item.product.title }}
-            </h3>
-            <p class="text-gray-600">Quantity: {{ item.quantity }}</p>
+    <script>
+      function showAddressError() {
+        const errorContainer = document.getElementById('js-error-container');
+        
+        // Create the error HTML
+        const errorHtml = `
+          <div class="flex items-center p-4 mb-6 text-sm rounded-lg bg-red-50 text-red-800 border border-red-200 animate-pulse">
+            <i class="fas fa-exclamation-circle mr-2 text-lg"></i>
+            <div>
+              <span class="font-bold">Action Required:</span> Please select or add a shipping address to place your order.
+            </div>
           </div>
-          <div class="text-right">
-            <p class="text-lg font-semibold text-gray-900">
-              ₹{{ item.total_price }}
-            </p>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-
-      <div class="border-t border-gray-200 pt-4">
-        <div class="flex justify-between text-lg font-semibold">
-          <span>Total:</span>
-          <span class="text-indigo-600">₹{{ total_price }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-{% endblock %}
+        `;
+    
+        // Inject the HTML
+        errorContainer.innerHTML = errorHtml;
+    
+        // Scroll to the top of the page smoothly
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }
+    </script>
+  </body>
+</html>

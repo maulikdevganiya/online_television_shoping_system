@@ -11,7 +11,7 @@ urlpatterns = [
     path('login', views.login, name="login" ),
     path("header/",views.header,name="header"),
     path("footer/",views.footer,name="footer"),
-    path('my_addrerss', views.my_addrerss, name="my_addrerss" ),
+    path('my_address', views.my_address, name="my_address" ),
     path('my_cart', views.my_cart, name="my_cart" ),
     path('my_cart2', views.my_cart2, name="my_cart2" ),
     path('add_to_cart/<int:product_id>/', views.add_to_cart, name="add_to_cart" ),
@@ -33,6 +33,9 @@ urlpatterns = [
     path('edit_address/<int:address_id>/', views.edit_address, name="edit_address" ),
     path('delete_address/<int:address_id>/', views.delete_address, name="delete_address" ),
     path('set_default_address/<int:address_id>/', views.set_default_address, name="set_default_address" ),
+    path('payment_success/', views.payment_success, name="payment_success" ),
+    path('payment_failure/', views.payment_failure, name="payment_failure" ),
+    path('payment_cancel/', views.payment_cancel, name="payment_cancel" ),
     path("logout/", views.logout_view, name="logout"),
 
 ]

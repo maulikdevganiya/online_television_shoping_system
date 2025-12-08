@@ -1,49 +1,89 @@
-
-    <footer>
-        <div class="container">
-            <div class="row pb-5">
-                <div class="col-md-4 mb-4">
-                    <h5 class="text-white mb-3">About TeleMart</h5>
-                    <p class="small">We are your premier destination for the latest in television technology. Bringing the theater experience to your living room since 2020.</p>
-                    <div class="mt-3">
-                        <a href="#" class="me-3"><i class="fab fa-facebook fa-lg"></i></a>
-                        <a href="#" class="me-3"><i class="fab fa-twitter fa-lg"></i></a>
-                        <a href="#" class="me-3"><i class="fab fa-instagram fa-lg"></i></a>
+<!-- FOOTER -->
+    <footer class="bg-gray-900 text-gray-300 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            
+            <!-- Grid Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+                
+                <!-- Column 1: About -->
+                <div class="space-y-4">
+                    <h5 class="text-white text-lg font-bold tracking-wide">About TeleMart</h5>
+                    <p class="text-sm leading-relaxed text-gray-400">
+                        We are your premier destination for the latest in television technology. Bringing the theater experience to your living room since 2020.
+                    </p>
+                    <!-- Social Icons -->
+                    <div class="flex space-x-4 pt-2">
+                        <a href="#" class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition duration-300">
+                            <i class="fab fa-facebook-f text-sm"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-400 hover:text-white transition duration-300">
+                            <i class="fab fa-twitter text-sm"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center hover:bg-pink-600 hover:text-white transition duration-300">
+                            <i class="fab fa-instagram text-sm"></i>
+                        </a>
                     </div>
                 </div>
-                <div class="col-md-2 mb-4">
-                    <h5 class="text-white mb-3">Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="shop.html">Shop All</a></li>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="#">Contact</a></li>
+
+                <!-- Column 2: Quick Links -->
+                <div>
+                    <h5 class="text-white text-lg font-bold mb-4 tracking-wide">Quick Links</h5>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="{% url 'index' %}" class="hover:text-indigo-400 transition-colors duration-200">Home</a></li>
+                        <li><a href="{% url 'filter' %}" class="hover:text-indigo-400 transition-colors duration-200">Shop All</a></li>
+                        <li><a href="{% url 'about_us' %}" class="hover:text-indigo-400 transition-colors duration-200">About Us</a></li>
+                        <li><a href="{% url 'contact_us' %}" class="hover:text-indigo-400 transition-colors duration-200">Contact</a></li>
                     </ul>
                 </div>
-                <div class="col-md-3 mb-4">
-                    <h5 class="text-white mb-3">Customer Care</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#">FAQs</a></li>
-                        <li><a href="#">Shipping Policy</a></li>
-                        <li><a href="#">Returns & Refunds</a></li>
-                        <li><a href="#">Track Order</a></li>
+
+                <!-- Column 3: Customer Care -->
+                <div>
+                    <h5 class="text-white text-lg font-bold mb-4 tracking-wide">Customer Care</h5>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-indigo-400 transition-colors duration-200">FAQs</a></li>
+                        <li><a href="#" class="hover:text-indigo-400 transition-colors duration-200">Shipping Policy</a></li>
+                        <li><a href="#" class="hover:text-indigo-400 transition-colors duration-200">Returns & Refunds</a></li>
+                        <li><a href="#" class="hover:text-indigo-400 transition-colors duration-200">Track Order</a></li>
                     </ul>
                 </div>
-                <div class="col-md-3 mb-4">
-                    <h5 class="text-white mb-3">Contact Us</h5>
-                    <ul class="list-unstyled small">
-                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> 123 Tech Street, Silicon Valley, CA</li>
-                        <li class="mb-2"><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
-                        <li class="mb-2"><i class="fas fa-envelope me-2"></i> support@telemart.com</li>
+
+                <!-- Column 4: Contact Info -->
+                <div>
+                    <h5 class="text-white text-lg font-bold mb-4 tracking-wide">Contact Us</h5>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-indigo-500"></i>
+                            <span>123 Tech Street,<br>Silicon Valley, CA</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone mr-3 text-indigo-500"></i>
+                            <span>+1 (555) 123-4567</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-indigo-500"></i>
+                            <a href="mailto:support@telemart.com" class="hover:text-indigo-400">support@telemart.com</a>
+                        </li>
                     </ul>
                 </div>
             </div>
-            <div class="border-top border-secondary pt-4 pb-4 text-center small">
-                &copy; 2025 TeleMart Shop. All Rights Reserved.
+
+            <!-- Bottom Bar -->
+            <div class="border-t border-gray-800 pt-8 mt-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+                <p>&copy; 2025 TeleMart Shop. All Rights Reserved.</p>
+                <div class="flex space-x-4 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-gray-300">Privacy Policy</a>
+                    <a href="#" class="hover:text-gray-300">Terms of Service</a>
+                </div>
             </div>
         </div>
     </footer>
 </body>
+
+<!-- Flowbite Script (Keep if you are using Flowbite components elsewhere) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+
+<script>
+    // Any custom JS goes here
+</script>
 
 </html>

@@ -9,6 +9,7 @@ urlpatterns = [
     path("product/", views.product, name="product"),
     path("payment/", views.payment, name="payment"),
     path("order/", views.order, name="order"),
+    path("update-order-status/<int:order_id>/", views.update_order_status, name="update_order_status"),
     path("customer/", views.customer, name="customer"),
     path("add_product/", views.add_product, name="add_product"),
     path("edit_product/<int:id>/", views.edit_product, name="edit_product"),
@@ -26,7 +27,8 @@ urlpatterns = [
     path("admin_image_sections/", views.admin_image_sections, name="admin_image_sections"),
     path("admin_footer/", views.admin_footer, name="admin_footer"),
     path("admin_msg/", views.admin_msg, name="admin_msg"),
-
+    path('update-order-status/<int:order_id>/', views.update_order_status, name='update_order_status'),
+    path('refund-payment/<int:payment_id>/', views.refund_payment, name='refund_payment'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

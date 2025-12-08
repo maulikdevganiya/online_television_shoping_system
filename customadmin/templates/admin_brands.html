@@ -3,19 +3,174 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brands</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="{% static 'Admin/css/admin_style.css' %}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brand Management | Admin</title>
     
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <link rel="stylesheet" href="{% static 'Admin/css/admin_style.css' %}" />
+
     <style>
-            body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', sans-serif;
+        :root {
+            --primary-color: #435ebe;
+            --secondary-color: #6c757d;
+            --bg-light: #f2f7ff;
+            --card-shadow: 0 5px 20px rgba(0,0,0,0.05);
         }
-            .main-content {
-            margin-left: 250px;
-            padding: 30px;
+
+        body {
+            background-color: var(--bg-light);
+            font-family: 'Inter', sans-serif;
+            color: #444;
         }
+
+        /* Layout Adjustments */
+        .main-content {
+            margin-left: 250px; /* Matches your sidebar width */
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        /* Card Styling */
+        .brand-card {
+            background: #fff;
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(67, 94, 190, 0.15);
+        }
+
+        /* Image Container */
+        .brand-logo-wrapper {
+            background: #f8f9fa;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 20px;
+            position: relative;
+        }
+
+        .brand-logo-wrapper img {
+            max-height: 80px;
+            max-width: 80%;
+            object-fit: contain;
+            filter: grayscale(100%); /* Start gray */
+            opacity: 0.8;
+            transition: all 0.4s ease;
+        }
+
+        .brand-card:hover .brand-logo-wrapper img {
+            filter: grayscale(0%); /* Color on hover */
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        /* Action Buttons overlay */
+        .card-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            opacity: 0;
+            transition: 0.3s;
+            z-index: 10;
+        }
+
+        .brand-card:hover .card-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            color: #555;
+            text-decoration: none;
+            margin-left: 5px;
+            transition: 0.2s;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .action-btn.delete:hover {
+            background: #dc3545;
+        }
+
+        /* Card Body */
+        .card-body {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #2d3436;
+        }
+
+        .brand-desc {
+            font-size: 0.85rem;
+            color: #888;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* Limit to 2 lines */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        /* Badge Styling */
+        .status-badge {
+            margin-top: auto;
+            align-self: flex-start;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active { background: #e6fffa; color: #00b894; }
+        .status-inactive { background: #fff5f5; color: #ff7675; }
+
+        /* Responsive Sidebar fix */
+        @media (max-width: 991px) {
+            .main-content { margin-left: 0; }
+        }
+        
+        /* Modal Styles */
+        .modal-content { border-radius: 15px; border: none; }
+        .modal-header { background: #f8f9fa; border-bottom: 1px solid #eee; border-radius: 15px 15px 0 0; }
+        .form-control, .form-select { border-radius: 8px; padding: 10px 15px; border: 1px solid #e0e0e0; }
+        .form-control:focus { box-shadow: 0 0 0 3px rgba(67, 94, 190, 0.15); border-color: var(--primary-color); }
+        .img-preview { width: 100%; height: 150px; background: #f8f9fa; border: 2px dashed #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; color: #aaa; overflow: hidden;}
+        .img-preview img { max-height: 100%; object-fit: contain; }
     </style>
 </head>
 
@@ -24,86 +179,134 @@
 {% include "admin_sidebar.html" %}
 {% include "admin_header.html" %}
 
-<div class="main-content p-4">
+<div class="main-content">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">Brand Manufacturers</h2>
-
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#brandModal">
-            <i class="fas fa-plus-circle"></i> Add Brand
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5">
+        <div>
+            <h3 class="fw-bold m-0 text-dark">Brand Manufacturers</h3>
+            <p class="text-muted small m-0">Manage your product brands and partners</p>
+        </div>
+        <button class="btn btn-primary px-4 py-2 rounded-pill shadow-sm fw-medium mt-3 mt-md-0" data-bs-toggle="modal" data-bs-target="#brandModal">
+            <i class="fas fa-plus me-2"></i>Add New Brand
         </button>
     </div>
 
     <div class="row g-4">
-
         {% for b in brands %}
-        <div class="col-md-4 col-xl-3">
-            <div class="brand-card shadow-sm p-3 bg-white rounded">
-
-                <div class="text-end">
-                    <a href="{% url 'edit_brand' b.id %}" class="btn btn-sm btn-light">
-                        <i class="fas fa-pen text-primary"></i>
+        <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+            <div class="brand-card">
+                
+                <div class="card-actions">
+                    <a href="{% url 'edit_brand' b.id %}" class="action-btn" title="Edit">
+                        <i class="fas fa-pen fa-xs"></i>
                     </a>
-                    <a onclick="return confirm('Delete this brand?')" href="{% url 'delete_brand' b.id %}" class="btn btn-sm btn-light">
-                        <i class="fas fa-trash text-danger"></i>
+                    <a onclick="return confirm('Are you sure you want to delete this brand?')" href="{% url 'delete_brand' b.id %}" class="action-btn delete" title="Delete">
+                        <i class="fas fa-trash fa-xs"></i>
                     </a>
                 </div>
 
-                <div class="brand-logo-wrapper text-center">
-                    <img src="{{ b.bimage.url }}" style="max-height:80px;">
+                <div class="brand-logo-wrapper">
+                    {% if b.bimage %}
+                        <img src="{{ b.bimage.url }}" alt="{{ b.bname }}">
+                    {% else %}
+                        <span class="text-muted"><i class="fas fa-image fa-2x"></i></span>
+                    {% endif %}
                 </div>
 
-                <h5 class="fw-bold mt-3">{{ b.bname }}</h5>
-                <p class="text-muted small">{{ b.description }}</p>
-
-                <span class="badge {% if b.b_status == 'Active' %}bg-success{% else %}bg-danger{% endif %}">
-                    {{ b.b_status }}
-                </span>
-
+                <div class="card-body">
+                    <h5 class="brand-title">{{ b.bname }}</h5>
+                    <p class="brand-desc">
+                        {% if b.description %}
+                            {{ b.description }}
+                        {% else %}
+                            No description available.
+                        {% endif %}
+                    </p>
+                    
+                    <span class="status-badge {% if b.b_status == 'Active' %}status-active{% else %}status-inactive{% endif %}">
+                        <i class="fas fa-circle fa-xs me-1"></i> {{ b.b_status }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="py-5 bg-white rounded-3 shadow-sm">
+                <i class="fas fa-tags fa-4x text-light mb-3" style="color: #e0e0e0 !important;"></i>
+                <h5 class="text-muted">No Brands Found</h5>
+                <p class="small text-secondary">Get started by adding your first brand.</p>
+                <button class="btn btn-outline-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#brandModal">Add Brand</button>
             </div>
         </div>
         {% endfor %}
-
     </div>
 
 </div>
 
-<!-- ADD BRAND MODAL -->
-<div class="modal fade" id="brandModal">
-    <div class="modal-dialog">
+<div class="modal fade" id="brandModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <form class="modal-content" action="{% url 'add_brand' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
+            
             <div class="modal-header">
-                <h5 class="modal-title">Add New Brand</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title fw-bold">Add New Brand</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <div class="modal-body">
+            <div class="modal-body p-4">
+                
+                <div class="mb-3">
+                    <label class="form-label fw-medium small text-muted">Brand Logo</label>
+                    <div class="img-preview" id="previewBox">
+                        <span>Image Preview</span>
+                    </div>
+                    <input type="file" name="bimage" class="form-control" id="brandImageInput" accept="image/*" onchange="previewImage(this)" required>
+                </div>
 
-                <label class="form-label">Brand Image</label>
-                <input type="file" name="bimage" class="form-control" required>
+                <div class="mb-3">
+                    <label class="form-label fw-medium small text-muted">Brand Name</label>
+                    <input type="text" name="bname" class="form-control" placeholder="e.g. Samsung" required>
+                </div>
 
-                <label class="form-label mt-3">Brand Name</label>
-                <input type="text" name="bname" class="form-control" required>
+                <div class="mb-3">
+                    <label class="form-label fw-medium small text-muted">Description</label>
+                    <textarea name="description" class="form-control" rows="3" placeholder="Short description about the brand..."></textarea>
+                </div>
 
-                <label class="form-label mt-3">Description</label>
-                <textarea name="description" class="form-control"></textarea>
-
-                <label class="form-label mt-3">Status</label>
-                <select name="status" class="form-select">
-                    <option>Active</option>
-                    <option>Inactive</option>
-                </select>
-
+                <div class="mb-3">
+                    <label class="form-label fw-medium small text-muted">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="Active" selected>Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
             </div>
 
-            <div class="modal-footer">
-                <button class="btn btn-primary">Save Brand</button>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary px-4">Save Brand</button>
             </div>
         </form>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Simple Image Preview Script
+    function previewImage(input) {
+        const previewBox = document.getElementById('previewBox');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewBox.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+            }
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            previewBox.innerHTML = `<span>Image Preview</span>`;
+        }
+    }
+</script>
+
 </body>
 </html>

@@ -1,11 +1,14 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
+from django.http import JsonResponse
+from django.db import models
+import json
 from app.forms import CarouselForm
 # from app.middleware import admin_required
 from datetime import *
 from .models import Collection, CollectionProduct
-from app.models import Admin, Brand,Carousel,Product,ProductFeature
+from app.models import Admin, Brand,Carousel,Product,ProductFeature,Order,OrderItem,Payment
 from django.utils.timezone import now
 from decimal import Decimal
 # Create your views here.
@@ -67,10 +70,58 @@ def product(request):
     return render(request,"admin_product.html", {"products": products} )
 
 def payment(request):
-    return render(request,"admin_payment.html" )
+    if "admin_id" not in request.session:
+        return redirect("admin_login")
+
+    # Fetch all payments with related order and user data
+    payments = Payment.objects.select_related('order__user').all().order_by('-payment_date')
+
+    # Calculate financial statistics
+    total_revenue = payments.filter(payment_status='completed').aggregate(
+        total=models.Sum('amount'))['total'] or 0
+
+    total_transactions = payments.filter(payment_status='completed').count()
+
+    refunded_amount = payments.filter(payment_status='refunded').aggregate(
+        total=models.Sum('amount'))['total'] or 0
+
+    failed_payments = payments.filter(payment_status='failed').count()
+
+    # Get recent transactions (last 50)
+    recent_payments = payments[:50]
+
+    context = {
+        'payments': recent_payments,
+        'total_revenue': total_revenue,
+        'total_transactions': total_transactions,
+        'refunded_amount': refunded_amount,
+        'failed_payments': failed_payments,
+    }
+
+    return render(request, "admin_payment.html", context)
 
 def order(request):
-    return render(request,"admin_order.html" )
+    if "admin_id" not in request.session:
+        return redirect("admin_login")
+
+    # Fetch all orders with related data
+    orders = Order.objects.select_related('user').prefetch_related('order_items__product', 'payment').all().order_by('-created_at')
+
+    # Calculate statistics
+    total_orders = orders.count()
+    pending_orders = orders.filter(status='pending').count()
+    shipped_orders = orders.filter(status='shipped').count()
+    cancelled_orders = orders.filter(status='cancelled').count()
+
+    context = {
+        'orders': orders,
+        'total_orders': total_orders,
+        'pending_orders': pending_orders,
+        'completed_orders': shipped_orders,
+        'cancelled_orders': cancelled_orders,
+    }
+
+    return render(request, "admin_order.html", context)
 
 def customer(request):
     return render(request,"admin_customer.html" )
@@ -383,4 +434,77 @@ def delete_collection(request, id):
     messages.success(request, "Collection deleted successfully!")
     return redirect('admin_collections')
 
+def update_order_status(request, order_id):
+    print(f"--- UPDATE STATUS CALLED FOR ORDER {order_id} ---") # Debug print
+
+    # 1. Check Authentication (Support both custom session AND standard Django User)
+    is_custom_admin = "admin_id" in request.session
+    is_django_admin = request.user.is_authenticated and request.user.is_staff
+
+    if not (is_custom_admin or is_django_admin):
+        print("Error: User not authorized")
+        return JsonResponse({'success': False, 'error': 'Unauthorized access'}, status=403)
+
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            new_status = data.get('status')
+            print(f"Attempting to set status to: {new_status}") # Debug print
+
+            # Validate status
+            valid_statuses = ['pending', 'processing', 'shipped', 'cancelled']
+            if new_status not in valid_statuses:
+                return JsonResponse({'success': False, 'error': f'Invalid status. Must be one of {valid_statuses}'})
+
+            # Update order
+            order = get_object_or_404(Order, id=order_id)
+            order.status = new_status
+            order.save()
+            
+            print("Success: Database updated") # Debug print
+            return JsonResponse({'success': True, 'message': f'Order {order_id} updated to {new_status}'})
+
+        except Exception as e:
+            print(f"Exception Occurred: {str(e)}") # Debug print
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=405)
+
+def refund_payment(request, payment_id):
+    """
+    Handle payment refund requests from admin panel
+    """
+    # Check admin authentication
+    if "admin_id" not in request.session:
+        return JsonResponse({'success': False, 'error': 'Unauthorized access'}, status=403)
+
+    if request.method == 'POST':
+        try:
+            # Get the payment object
+            payment = get_object_or_404(Payment, id=payment_id)
+
+            # Check if payment can be refunded
+            if payment.payment_status not in ['completed', 'pending']:
+                return JsonResponse({
+                    'success': False,
+                    'error': f'Cannot refund payment with status: {payment.payment_status}'
+                })
+
+            # Update payment status to refunded
+            payment.payment_status = 'refunded'
+            payment.save()
+
+            # Optionally update order status if needed
+            # payment.order.status = 'cancelled'
+            # payment.order.save()
+
+            return JsonResponse({
+                'success': True,
+                'message': f'Payment {payment_id} has been refunded successfully'
+            })
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=405)
 

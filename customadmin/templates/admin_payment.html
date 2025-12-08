@@ -27,9 +27,9 @@
         <div class="col-xl-3 col-md-6 mb-3">
           <div class="fin-card bg-gradient-1">
             <h6>Total Revenue</h6>
-            <h3>$128,450.00</h3>
+            <h3>${{ total_revenue|floatformat:2 }}</h3>
             <div class="small text-white-50">
-              <i class="fas fa-arrow-up"></i> 12% vs last month
+              <i class="fas fa-arrow-up"></i> Revenue from completed payments
             </div>
             <i class="fas fa-dollar-sign fin-icon"></i>
           </div>
@@ -37,23 +37,23 @@
         <div class="col-xl-3 col-md-6 mb-3">
           <div class="fin-card bg-gradient-2">
             <h6>Transactions</h6>
-            <h3>1,402</h3>
-            <div class="small text-white-50">This Month</div>
+            <h3>{{ total_transactions }}</h3>
+            <div class="small text-white-50">Completed payments</div>
             <i class="fas fa-exchange-alt fin-icon"></i>
           </div>
         </div>
         <div class="col-xl-3 col-md-6 mb-3">
           <div class="fin-card bg-gradient-3">
             <h6>Refunds Processed</h6>
-            <h3>$2,100.00</h3>
-            <div class="small text-white-50">14 Disputes</div>
+            <h3>${{ refunded_amount|floatformat:2 }}</h3>
+            <div class="small text-white-50">Total refunded amount</div>
             <i class="fas fa-undo fin-icon"></i>
           </div>
         </div>
         <div class="col-xl-3 col-md-6 mb-3">
           <div class="fin-card bg-gradient-4">
             <h6>Failed Payments</h6>
-            <h3>23</h3>
+            <h3>{{ failed_payments }}</h3>
             <div class="small text-white-50">Action required</div>
             <i class="fas fa-exclamation-triangle fin-icon"></i>
           </div>
@@ -176,179 +176,111 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-      // 1. Mock Data
-      let transactions = [
-        {
-          id: "TXN-8842",
-          date: "2025-10-24 14:30",
-          customer: "Alice Johnson",
-          amount: 1200.0,
-          method: "Visa",
-          last4: "4242",
-          status: "Success",
-          orderId: "ORD-901",
-        },
-        {
-          id: "TXN-8843",
-          date: "2025-10-24 13:15",
-          customer: "Bob Smith",
-          amount: 450.5,
-          method: "Mastercard",
-          last4: "8821",
-          status: "Success",
-          orderId: "ORD-902",
-        },
-        {
-          id: "TXN-8844",
-          date: "2025-10-23 09:45",
-          customer: "Charlie Brown",
-          amount: 89.0,
-          method: "PayPal",
-          last4: "",
-          status: "Failed",
-          orderId: "ORD-903",
-        },
-        {
-          id: "TXN-8845",
-          date: "2025-10-22 18:20",
-          customer: "Diana Prince",
-          amount: 2500.0,
-          method: "Amex",
-          last4: "1001",
-          status: "Refunded",
-          orderId: "ORD-904",
-        },
-        {
-          id: "TXN-8846",
-          date: "2025-10-22 11:10",
-          customer: "Evan Wright",
-          amount: 650.0,
-          method: "Visa",
-          last4: "1234",
-          status: "Success",
-          orderId: "ORD-905",
-        },
-      ];
-
       let currentTxnId = null; // Store ID for modal actions
 
-      // 2. Render Table
-      const tableBody = document.getElementById("transactionTableBody");
-
-      function renderTable(data) {
-        tableBody.innerHTML = "";
-
-        data.forEach((t) => {
-          // Icon Logic
-          let icon = "";
-          if (t.method === "Visa")
-            icon = '<i class="fab fa-cc-visa pay-icon"></i>';
-          else if (t.method === "Mastercard")
-            icon = '<i class="fab fa-cc-mastercard pay-icon"></i>';
-          else if (t.method === "PayPal")
-            icon = '<i class="fab fa-cc-paypal pay-icon"></i>';
-          else icon = '<i class="fab fa-cc-amex pay-icon"></i>';
-
-          // Status Logic
-          let badgeClass = "";
-          if (t.status === "Success") badgeClass = "status-success";
-          else if (t.status === "Failed") badgeClass = "status-failed";
-          else if (t.status === "Refunded") badgeClass = "status-refunded";
-
-          let methodDisplay =
-            t.method === "PayPal" ? "PayPal" : `**** ${t.last4}`;
-
-          let row = `
-                    <tr>
-                        <td class="ps-4 fw-bold text-primary">${t.id}</td>
-                        <td class="text-muted small">${t.date}</td>
-                        <td>${t.customer}</td>
-                        <td class="fw-bold">$${t.amount.toLocaleString(
-                          undefined,
-                          { minimumFractionDigits: 2 }
-                        )}</td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                ${icon}
-                                <span class="small text-muted">${methodDisplay}</span>
-                            </div>
-                        </td>
-                        <td><span class="badge rounded-pill ${badgeClass}">${
-            t.status
-          }</span></td>
-                        <td class="text-end pe-4">
-                            <button class="btn btn-sm btn-light border" onclick="openReceipt('${
-                              t.id
-                            }')">
-                                <i class="fas fa-file-invoice"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-          tableBody.innerHTML += row;
-        });
-      }
-
-      // 3. Initial Load
-      renderTable(transactions);
-
-      // 4. Receipt Modal Logic
+      // Receipt Modal Logic
       const receiptModal = new bootstrap.Modal(
         document.getElementById("receiptModal")
       );
 
-      function openReceipt(id) {
-        const t = transactions.find((x) => x.id === id);
-        currentTxnId = id;
+      function openReceipt(
+        paymentId,
+        transactionId,
+        date,
+        customer,
+        amount,
+        method,
+        status,
+        orderId
+      ) {
+        currentTxnId = paymentId;
 
-        document.getElementById("mId").innerText = t.id;
-        document.getElementById("mDate").innerText = t.date;
-        document.getElementById("mCustomer").innerText = t.customer;
-        document.getElementById("mAmount").innerText =
-          "$" +
-          t.amount.toLocaleString(undefined, { minimumFractionDigits: 2 });
-        document.getElementById("mMethod").innerText =
-          t.method + (t.last4 ? ` (**** ${t.last4})` : "");
+        document.getElementById("mId").innerText = transactionId;
+        document.getElementById("mDate").innerText = date;
+        document.getElementById("mCustomer").innerText = customer;
+        document.getElementById("mAmount").innerText = "$" + amount;
+        document.getElementById("mMethod").innerText = method;
+
+        // Update status badge
+        const statusElement = document.getElementById("mStatus");
+        statusElement.innerText = status;
+        if (status === "Completed") {
+          statusElement.className = "badge bg-success rounded-pill";
+        } else if (status === "Failed") {
+          statusElement.className = "badge bg-danger rounded-pill";
+        } else if (status === "Refunded") {
+          statusElement.className = "badge bg-warning rounded-pill";
+        } else {
+          statusElement.className = "badge bg-secondary rounded-pill";
+        }
+
+        // Update order reference link
+        const orderLink = document.querySelector("#receiptModal a");
+        orderLink.innerText = "#" + orderId;
+        orderLink.href = "#"; // You can update this to link to order details
 
         // Refund Button Logic
         const btn = document.getElementById("btnRefund");
-        if (t.status === "Success") {
+        if (status === "Completed") {
           btn.disabled = false;
           btn.innerHTML = '<i class="fas fa-undo me-2"></i> Issue Full Refund';
+          btn.onclick = function () {
+            issueRefund(paymentId);
+          };
         } else {
           btn.disabled = true;
           btn.innerText =
-            t.status === "Refunded"
-              ? "Already Refunded"
-              : "Cannot Refund Failed Txn";
+            status === "Refunded" ? "Already Refunded" : "Cannot Refund";
         }
 
         receiptModal.show();
       }
 
-      // 5. Issue Refund Function
-      function issueRefund() {
+      // Issue Refund Function
+      function issueRefund(paymentId) {
         if (
           confirm(
             "Are you sure you want to refund this transaction? This cannot be undone."
           )
         ) {
-          const index = transactions.findIndex((t) => t.id === currentTxnId);
-          transactions[index].status = "Refunded";
-
-          receiptModal.hide();
-          renderTable(transactions); // Refresh UI
-
-          // Show simple alert (in real app, use toast)
-          setTimeout(() => alert(`Refund processed for ${currentTxnId}`), 300);
+          // Send AJAX request to update payment status
+          fetch(`/customadmin/refund-payment/${paymentId}/`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken":
+                document.querySelector("[name=csrfmiddlewaretoken]")?.value ||
+                "",
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                receiptModal.hide();
+                alert("Refund processed successfully!");
+                location.reload(); // Refresh page to show updated data
+              } else {
+                alert("Error: " + data.error);
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("An error occurred while processing the refund.");
+            });
         }
       }
 
-      // 6. Filter Function
+      // Filter Function - Note: Since we're using Django templates, filtering is done server-side
       function filterTransactions() {
         const status = document.getElementById("statusFilter").value;
-        if (status === "All") renderTable(transactions);
-        else renderTable(transactions.filter((t) => t.status === status));
+        // For now, we'll redirect with query parameter
+        const url = new URL(window.location);
+        if (status !== "All") {
+          url.searchParams.set("status", status.toLowerCase());
+        } else {
+          url.searchParams.delete("status");
+        }
+        window.location.href = url.toString();
       }
     </script>
   </body>
