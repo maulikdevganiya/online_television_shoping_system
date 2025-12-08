@@ -45,11 +45,113 @@ def admin_login(request):
 def dashboard(request):
     # Check if admin is logged in
     if "admin_id" not in request.session:
-        return redirect("admin_login")   # change URL name if needed
+        return redirect("adminlogin")   # change URL name if needed
 
-    # Pass session values to template (optional because request.session already works)
+    # Fetch dynamic data for dashboard
+    from django.db.models import Sum, Count, Case, When, IntegerField
+    from django.db.models.functions import TruncMonth
+    from datetime import datetime
+
+    # Total Revenue: Sum of completed payments
+    total_revenue = Payment.objects.filter(payment_status='completed').aggregate(
+        total=Sum('amount'))['total'] or 0
+
+    # Total Orders: Count of all orders
+    total_orders = Order.objects.count()
+
+    # Pending Inquiries: Count of pending orders (assuming this represents inquiries)
+    pending_inquiries = Order.objects.filter(status='pending').count()
+
+    # Total Customers: Count of registered users
+    total_customers = UserRegister.objects.count()
+
+    # Recent Orders: Last 3 orders with details
+    recent_orders = Order.objects.select_related('user').prefetch_related('order_items__product').order_by('-created_at')[:3]
+
+    # Revenue Analytics: Monthly revenue for current year
+    current_year = datetime.now().year
+    monthly_revenue = Payment.objects.filter(
+        payment_status='completed',
+        payment_date__year=current_year
+    ).annotate(
+        month=TruncMonth('payment_date')
+    ).values('month').annotate(
+        total=Sum('amount')
+    ).order_by('month')
+
+    # Prepare monthly data for chart (12 months)
+    revenue_data = [0] * 12
+    for item in monthly_revenue:
+        month_index = item['month'].month - 1  # 0-based index
+        revenue_data[month_index] = float(item['total'])
+
+    # Sales by Category: Group by brand (since it's a TV shop)
+    sales_by_brand = OrderItem.objects.select_related('product__brand').values(
+        'product__brand__bname'
+    ).annotate(
+        total_sales=Sum('quantity')
+    ).order_by('-total_sales')[:4]  # Top 4 brands
+
+    # Prepare category data for chart
+    category_labels = []
+    category_data = []
+    for item in sales_by_brand:
+        category_labels.append(item['product__brand__bname'])
+        category_data.append(item['total_sales'])
+
+    # If less than 4 brands, fill with defaults
+    while len(category_labels) < 4:
+        category_labels.append(f"Brand {len(category_labels) + 1}")
+        category_data.append(0)
+
+    # Calculate revenue change (vs last month) - simplified version
+    from datetime import timedelta
+    last_month = datetime.now().replace(day=1) - timedelta(days=1)
+    current_month_revenue = Payment.objects.filter(
+        payment_status='completed',
+        payment_date__year=datetime.now().year,
+        payment_date__month=datetime.now().month
+    ).aggregate(total=Sum('amount'))['total'] or 0
+
+    last_month_revenue = Payment.objects.filter(
+        payment_status='completed',
+        payment_date__year=last_month.year,
+        payment_date__month=last_month.month
+    ).aggregate(total=Sum('amount'))['total'] or 0
+
+    if last_month_revenue > 0:
+        revenue_change = ((current_month_revenue - last_month_revenue) / last_month_revenue) * 100
+    else:
+        revenue_change = 0
+
+    # Calculate orders change (vs last month)
+    current_month_orders = Order.objects.filter(
+        created_at__year=datetime.now().year,
+        created_at__month=datetime.now().month
+    ).count()
+
+    last_month_orders = Order.objects.filter(
+        created_at__year=last_month.year,
+        created_at__month=last_month.month
+    ).count()
+
+    if last_month_orders > 0:
+        orders_change = ((current_month_orders - last_month_orders) / last_month_orders) * 100
+    else:
+        orders_change = 0
+
     context = {
-        "admin_name": request.session.get("admin_name")
+        "admin_name": request.session.get("admin_name"),
+        "total_revenue": total_revenue,
+        "total_orders": total_orders,
+        "pending_inquiries": pending_inquiries,
+        "total_customers": total_customers,
+        "recent_orders": recent_orders,
+        "revenue_data": revenue_data,
+        "category_labels": category_labels,
+        "category_data": category_data,
+        "revenue_change": revenue_change,
+        "orders_change": orders_change,
     }
 
     return render(request, "dashboard.html", context)

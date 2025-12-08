@@ -1,4 +1,4 @@
-{%load static%}
+{% load static humanize %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -107,10 +107,17 @@
             >
               <div>
                 <p class="text-muted small mb-1">Total Revenue</p>
-                <h3 class="fw-bold mb-0">$128K</h3>
-                <small class="text-success"
-                  ><i class="fas fa-arrow-up"></i> 12% vs last month</small
+                <h3 class="fw-bold mb-0">
+                  ${{ total_revenue|floatformat:0|intcomma }}
+                </h3>
+                <small
+                  class="{% if revenue_change >= 0 %}text-success{% else %}text-danger{% endif %}"
                 >
+                  <i
+                    class="fas fa-arrow-{% if revenue_change >= 0 %}up{% else %}down{% endif %}"
+                  ></i>
+                  {{ revenue_change|floatformat:1 }}% vs last month
+                </small>
               </div>
               <div class="stat-icon-box bg-light-success">
                 <i class="fas fa-dollar-sign"></i>
@@ -123,10 +130,15 @@
             >
               <div>
                 <p class="text-muted small mb-1">Total Orders</p>
-                <h3 class="fw-bold mb-0">1,400</h3>
-                <small class="text-success"
-                  ><i class="fas fa-arrow-up"></i> 5% vs last month</small
+                <h3 class="fw-bold mb-0">{{ total_orders|intcomma }}</h3>
+                <small
+                  class="{% if orders_change >= 0 %}text-success{% else %}text-danger{% endif %}"
                 >
+                  <i
+                    class="fas fa-arrow-{% if orders_change >= 0 %}up{% else %}down{% endif %}"
+                  ></i>
+                  {{ orders_change|floatformat:1 }}% vs last month
+                </small>
               </div>
               <div class="stat-icon-box bg-light-primary">
                 <i class="fas fa-shopping-bag"></i>
@@ -139,7 +151,7 @@
             >
               <div>
                 <p class="text-muted small mb-1">Pending Inquiries</p>
-                <h3 class="fw-bold mb-0">23</h3>
+                <h3 class="fw-bold mb-0">{{ pending_inquiries|intcomma }}</h3>
                 <small class="text-danger"
                   ><i class="fas fa-exclamation-circle"></i> Action
                   required</small
@@ -156,7 +168,7 @@
             >
               <div>
                 <p class="text-muted small mb-1">Total Customers</p>
-                <h3 class="fw-bold mb-0">8,500</h3>
+                <h3 class="fw-bold mb-0">{{ total_customers|intcomma }}</h3>
                 <small class="text-muted">Total registered</small>
               </div>
               <div class="stat-icon-box bg-light-warning">
@@ -192,7 +204,7 @@
         <div class="chart-card">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="fw-bold">Recent Orders</h5>
-            <a href="admin-orders.html" class="btn btn-sm btn-primary"
+            <a href="{% url 'order' %}" class="btn btn-sm btn-primary"
               >View All</a
             >
           </div>
@@ -208,29 +220,48 @@
                 </tr>
               </thead>
               <tbody>
+                {% for order in recent_orders %}
                 <tr>
-                  <td>#ORD-001</td>
-                  <td>John Doe</td>
-                  <td>Samsung 55" 4K TV</td>
-                  <td>$599.00</td>
-                  <td><span class="badge bg-success">Shipped</span></td>
-                </tr>
-                <tr>
-                  <td>#ORD-002</td>
-                  <td>Jane Smith</td>
-                  <td>Sony Soundbar</td>
-                  <td>$250.00</td>
+                  <td>#{{ order.order_number }}</td>
+                  <td>{{ order.user.name }}</td>
                   <td>
+                    {% for item in order.order_items.all %}
+                        {% if forloop.first %}
+                            {{ item.product.title }}
+                        {% endif %}
+                        {% if forloop.last and not forloop.first %}
+                            +{{ forloop.counter0 }} more
+                        {% endif %}
+                    {% empty %} 
+                        No products 
+                    {% endfor %}
+                  </td>
+                  <td>${{ order.total_amount|floatformat:2 }}</td>
+                  <td>
+                    {% if order.status == 'pending' %}
                     <span class="badge bg-warning text-dark">Pending</span>
+                    {% elif order.status == 'processing' %}
+                    <span class="badge bg-info">Processing</span>
+                    {% elif order.status == 'shipped' %}
+                    <span class="badge bg-success">Shipped</span>
+                    {% elif order.status == 'delivered' %}
+                    <span class="badge bg-primary">Delivered</span>
+                    {% elif order.status == 'cancelled' %}
+                    <span class="badge bg-danger">Cancelled</span>
+                    {% else %}
+                    <span class="badge bg-secondary"
+                      >{{ order.status|title }}</span
+                    >
+                    {% endif %}
                   </td>
                 </tr>
+                {% empty %}
                 <tr>
-                  <td>#ORD-003</td>
-                  <td>Mike Ross</td>
-                  <td>LG OLED C1</td>
-                  <td>$1,299.00</td>
-                  <td><span class="badge bg-danger">Cancelled</span></td>
+                  <td colspan="5" class="text-center text-muted">
+                    No recent orders
+                  </td>
                 </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>
@@ -282,10 +313,7 @@
           datasets: [
             {
               label: "Revenue ($)",
-              data: [
-                12000, 19000, 3000, 5000, 2000, 30000, 45000, 25000, 32000,
-                40000, 50000, 60000,
-              ],
+              data: {{ revenue_data|safe }},
               borderColor: "#3498db",
               backgroundColor: "rgba(52, 152, 219, 0.1)",
               borderWidth: 2,
@@ -306,11 +334,11 @@
       new Chart(ctxCat, {
         type: "doughnut",
         data: {
-          labels: ["Smart TVs", "OLEDs", "Audio", "Accessories"],
+          labels: {{ category_labels|safe }},
           datasets: [
             {
-              data: [45, 25, 20, 10],
-              backgroundColor: ["#2c3e50", "#3498db", "#e74c3c", "#f1c40f"],
+              data: {{ category_data|safe }},
+              backgroundColor: ["#2c3e50", "#3498db", "#e74c3c", "#f1c40f", "#9b59b6", "#1abc9c", "#34495e", "#e67e22"],
               borderWidth: 0,
             },
           ],
