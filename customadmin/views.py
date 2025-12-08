@@ -8,7 +8,7 @@ from app.forms import CarouselForm
 # from app.middleware import admin_required
 from datetime import *
 from .models import Collection, CollectionProduct
-from app.models import Admin, Brand,Carousel,Product,ProductFeature,Order,OrderItem,Payment
+from app.models import Admin, Brand,Carousel,Product,ProductFeature,Order,OrderItem,Payment,UserRegister
 from django.utils.timezone import now
 from decimal import Decimal
 # Create your views here.
@@ -73,21 +73,21 @@ def payment(request):
     if "admin_id" not in request.session:
         return redirect("admin_login")
 
-    # Fetch all payments with related order and user data
-    payments = Payment.objects.select_related('order__user').all().order_by('-payment_date')
+    # Fetch successful payments with related order and user data
+    payments = Payment.objects.select_related('order__user').filter(payment_status='completed').order_by('-payment_date')
 
     # Calculate financial statistics
-    total_revenue = payments.filter(payment_status='completed').aggregate(
+    total_revenue = payments.aggregate(
         total=models.Sum('amount'))['total'] or 0
 
-    total_transactions = payments.filter(payment_status='completed').count()
+    total_transactions = payments.count()
 
-    refunded_amount = payments.filter(payment_status='refunded').aggregate(
+    refunded_amount = Payment.objects.filter(payment_status='refunded').aggregate(
         total=models.Sum('amount'))['total'] or 0
 
-    failed_payments = payments.filter(payment_status='failed').count()
+    failed_payments = Payment.objects.filter(payment_status='failed').count()
 
-    # Get recent transactions (last 50)
+    # Get recent successful transactions (last 50)
     recent_payments = payments[:50]
 
     context = {
@@ -124,7 +124,37 @@ def order(request):
     return render(request, "admin_order.html", context)
 
 def customer(request):
-    return render(request,"admin_customer.html" )
+    if "admin_id" not in request.session:
+        return redirect("admin_login")
+
+    # Fetch all users with order statistics
+    from app.models import UserRegister, Order, Payment
+    from django.db.models import Count, Sum, Case, When, DecimalField
+
+    customers = UserRegister.objects.annotate(
+        total_orders=Count('order'),
+        total_spent=Sum(
+            Case(
+                When(order__payment__payment_status='completed', then='order__payment__amount'),
+                default=0,
+                output_field=DecimalField(max_digits=10, decimal_places=2)
+            )
+        )
+    ).order_by('-created_at')
+
+    # Calculate statistics
+    total_customers = customers.count()
+    active_customers = customers.filter(total_orders__gt=0).count()
+    vip_customers = customers.filter(total_spent__gt=5000).count()
+
+    context = {
+        'customers': customers,
+        'total_customers': total_customers,
+        'active_customers': active_customers,
+        'vip_customers': vip_customers,
+    }
+
+    return render(request, "admin_customer.html", context)
 
 def add_product(request):
     if "admin_id" not in request.session:
@@ -452,7 +482,7 @@ def update_order_status(request, order_id):
             print(f"Attempting to set status to: {new_status}") # Debug print
 
             # Validate status
-            valid_statuses = ['pending', 'processing', 'shipped', 'cancelled']
+            valid_statuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled']
             if new_status not in valid_statuses:
                 return JsonResponse({'success': False, 'error': f'Invalid status. Must be one of {valid_statuses}'})
 
@@ -507,4 +537,13 @@ def refund_payment(request, payment_id):
             return JsonResponse({'success': False, 'error': str(e)})
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=405)
+
+def delete_customer(request, id):
+    if "admin_id" not in request.session:
+        return redirect("admin_login")
+
+    customer = get_object_or_404(UserRegister, id=id)
+    customer.delete()
+    messages.success(request, "Customer deleted successfully!")
+    return redirect('customer')
 

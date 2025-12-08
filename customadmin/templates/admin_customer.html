@@ -1,288 +1,327 @@
-{%load static%}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Manage Customers - TV Shop Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <link rel="stylesheet" href="{% static 'Admin/css/a_customer.css' %}" />
-</head>
-<body>
-
+  </head>
+  <body>
     {% include "admin_sidebar.html"%}
 
     <div class="main-content">
-        
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold">Customer Management</h2>
-            <button class="btn btn-primary" onclick="alert('In a real app, this would open a registration form.')">
-                <i class="fas fa-user-plus me-2"></i> Add New Customer
-            </button>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Customer Management</h2>
+        <button
+          class="btn btn-primary"
+          onclick="alert('In a real app, this would open a registration form.')"
+        >
+          <i class="fas fa-user-plus me-2"></i> Add New Customer
+        </button>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="stat-card">
+            <div>
+              <h6 class="text-muted">Total Customers</h6>
+              <h3 id="totalCust">{{ total_customers }}</h3>
+            </div>
+            <div class="stat-icon bg-primary text-white">
+              <i class="fas fa-users"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="stat-card">
+            <div>
+              <h6 class="text-muted">Active Users</h6>
+              <h3 id="activeCust">{{ active_customers }}</h3>
+            </div>
+            <div class="stat-icon bg-success text-white">
+              <i class="fas fa-user-check"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="d-flex gap-2">
+            <select
+              class="form-select"
+              style="width: 150px"
+              id="statusFilter"
+              onchange="filterCustomers()"
+            >
+              <option value="All">All Status</option>
+              <option value="Active">Active</option>
+              <option value="Blocked">Blocked</option>
+            </select>
+          </div>
+          <div class="input-group" style="max-width: 300px">
+            <span class="input-group-text bg-white border-end-0"
+              ><i class="fas fa-search text-muted"></i
+            ></span>
+            <input
+              type="text"
+              class="form-control border-start-0 ps-0"
+              id="searchInput"
+              placeholder="Search name or email..."
+              onkeyup="searchCustomers()"
+            />
+          </div>
         </div>
 
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="stat-card">
-                    <div>
-                        <h6 class="text-muted">Total Customers</h6>
-                        <h3 id="totalCust">0</h3>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>User</th>
+                <th>Contact Info</th>
+                <th>Joined Date</th>
+                <th>Orders</th>
+                <th>Total Spent</th>
+                <th>Status</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="customerTableBody">
+              {% for customer in customers %}
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="avatar-circle me-3">
+                      {{ customer.name|first|upper }}
                     </div>
-                    <div class="stat-icon bg-primary text-white"><i class="fas fa-users"></i></div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stat-card">
                     <div>
-                        <h6 class="text-muted">Active Users</h6>
-                        <h3 id="activeCust">0</h3>
+                      <div class="fw-bold">
+                        {{ customer.name }} {{ customer.last_name|default:"" }}
+                      </div>
                     </div>
-                    <div class="stat-icon bg-success text-white"><i class="fas fa-user-check"></i></div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stat-card">
-                    <div>
-                        <h6 class="text-muted">VIP (High Spenders)</h6>
-                        <h3 id="vipCust">0</h3>
-                    </div>
-                    <div class="stat-icon bg-warning text-white"><i class="fas fa-crown"></i></div>
-                </div>
-            </div>
-        </div>
+                  </div>
+                </td>
+                
+                <td>
+                  <div class="d-flex flex-column">
+                    <span class="mb-1">
+                        <i class="fas fa-envelope text-muted me-2"></i>{{ customer.email|default:"No Email" }}
+                    </span>
+                    
+                    {% if customer.phone %}
+                    <span>
+                        <i class="fas fa-phone text-muted me-2"></i>{{ customer.phone }}
+                    </span>
+                    {% elif customer.mobile_number %}
+                    <span>
+                        <i class="fas fa-phone text-muted me-2"></i>{{ customer.mobile_number }}
+                    </span>
+                    {% else %}
+                    <span class="text-muted small">
+                        <i class="fas fa-phone text-muted me-2"></i>N/A
+                    </span>
+                    {% endif %}
+                  </div>
+                </td>
 
-        <div class="table-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="d-flex gap-2">
-                    <select class="form-select" style="width: 150px;" id="statusFilter" onchange="filterCustomers()">
-                        <option value="All">All Status</option>
-                        <option value="Active">Active</option>
-                        <option value="Blocked">Blocked</option>
-                    </select>
-                </div>
-                <div class="input-group" style="max-width: 300px;">
-                    <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                    <input type="text" class="form-control border-start-0 ps-0" id="searchInput" placeholder="Search name or email..." onkeyup="searchCustomers()">
-                </div>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>User</th>
-                            <th>Contact Info</th>
-                            <th>Joined Date</th>
-                            <th>Orders</th>
-                            <th>Total Spent</th>
-                            <th>Status</th>
-                            <th class="text-end">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="customerTableBody">
-                        </tbody>
-                </table>
-            </div>
+                <td>{{ customer.created_at|date:"M d, Y" }}</td>
+                <td>
+                  <span class="badge bg-info">{{ customer.total_orders }}</span>
+                </td>
+                <td>
+                  <span class="fw-bold text-success"
+                    >&#8377;{{ customer.total_spent|floatformat:2 }}</span
+                  >
+                </td>
+                <td>
+                  {% if customer.total_orders > 0 %}
+                  <span class="badge bg-success">Active</span>
+                  {% else %}
+                  <span class="badge bg-secondary">Inactive</span>
+                  {% endif %}
+                </td>
+                <td class="text-end">
+                  <button
+                    class="btn btn-sm btn-outline-primary me-1"
+                    onclick="viewProfile({{ customer.id }})"
+                  >
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button
+                    class="btn btn-sm btn-outline-danger"
+                    onclick="deleteCustomer({{ customer.id }})"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7" class="text-center py-4">
+                  <i class="fas fa-users fa-2x text-muted mb-2"></i>
+                  <p class="text-muted">No customers found</p>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
+      </div>
     </div>
 
     <div class="modal fade" id="profileModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Customer Profile</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Customer Profile</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-4 text-center border-end">
+                <img
+                  id="modalImg"
+                  src="{% static 'images/default-avatar.png' %}"
+                  class="rounded-circle mb-3"
+                  width="100"
+                  height="100"
+                  style="object-fit: cover"
+                />
+                <h5 class="fw-bold" id="modalName">Name</h5>
+                <p class="text-muted small" id="modalLoc">Location not available</p>
+                <span id="modalBadge" class="badge bg-success mb-3">Active</span>
+
+                <div class="text-start mt-3 px-3">
+                  <p class="small mb-1">
+                    <i class="fas fa-envelope me-2 text-muted"></i>
+                    <span id="modalEmail">email@example.com</span>
+                  </p>
+                  <p class="small mb-1">
+                    <i class="fas fa-phone me-2 text-muted"></i>
+                    <span id="modalPhone">N/A</span>
+                  </p>
+                  <p class="small mb-1">
+                    <i class="fas fa-calendar me-2 text-muted"></i> Joined:
+                    <span id="modalJoin">Jan 2024</span>
+                  </p>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4 text-center border-end">
-                            <img id="modalImg" src="" class="rounded-circle mb-3" width="100" height="100" style="object-fit:cover;">
-                            <h5 class="fw-bold" id="modalName">Name</h5>
-                            <p class="text-muted small" id="modalLoc">New York, USA</p>
-                            <span id="modalBadge" class="badge bg-success mb-3">Active</span>
-                            
-                            <div class="text-start mt-3 px-3">
-                                <p class="small mb-1"><i class="fas fa-envelope me-2 text-muted"></i> <span id="modalEmail">email@example.com</span></p>
-                                <p class="small mb-1"><i class="fas fa-phone me-2 text-muted"></i> <span id="modalPhone">+1 234 567 890</span></p>
-                                <p class="small mb-1"><i class="fas fa-calendar me-2 text-muted"></i> Joined: <span id="modalJoin">Jan 2024</span></p>
-                            </div>
-                        </div>
+              </div>
 
-                        <div class="col-md-8 ps-md-4">
-                            <h6 class="fw-bold text-primary mb-3">Statistics</h6>
-                            <div class="row mb-4">
-                                <div class="col-6">
-                                    <div class="p-3 bg-light rounded text-center">
-                                        <h4 class="mb-0 fw-bold" id="modalOrdersCount">0</h4>
-                                        <small class="text-muted">Total Orders</small>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="p-3 bg-light rounded text-center">
-                                        <h4 class="mb-0 fw-bold text-success" id="modalSpent">$0</h4>
-                                        <small class="text-muted">Lifetime Spent</small>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <h6 class="fw-bold text-primary mb-2">Recent Orders</h6>
-                            <table class="table table-sm table-bordered">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Date</th>
-                                        <th>Amount</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>#ORD-998</td>
-                                        <td>Oct 24, 2025</td>
-                                        <td>$1,200</td>
-                                        <td><span class="badge bg-success">Delivered</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>#ORD-982</td>
-                                        <td>Sep 12, 2025</td>
-                                        <td>$450</td>
-                                        <td><span class="badge bg-secondary">Processing</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+              <div class="col-md-8 ps-md-4">
+                <h6 class="fw-bold text-primary mb-3">Statistics</h6>
+                <div class="row mb-4">
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded text-center">
+                      <h4 class="mb-0 fw-bold" id="modalOrdersCount">0</h4>
+                      <small class="text-muted">Total Orders</small>
                     </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded text-center">
+                      <h4 class="mb-0 fw-bold text-success" id="modalSpent">
+                        &#8377;0
+                      </h4>
+                      <small class="text-muted">Lifetime Spent</small>
+                    </div>
+                  </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" onclick="alert('User Blocked!')"><i class="fas fa-ban me-2"></i>Block User</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                <div class="alert alert-light text-center border">
+                    <small class="text-muted">Detailed order history is available in the Orders tab.</small>
                 </div>
+              </div>
             </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // 1. Mock Data
-        let customers = [
-            { id: 1, name: "Alice Johnson", email: "alice@example.com", phone: "+1 555-0101", city: "New York", joined: "2024-03-15", orders: 12, spent: 5400, status: "Active", img: "https://i.pravatar.cc/150?u=1" },
-            { id: 2, name: "Bob Smith", email: "bob.smith@test.com", phone: "+1 555-0102", city: "California", joined: "2024-06-22", orders: 2, spent: 300, status: "Active", img: "https://i.pravatar.cc/150?u=2" },
-            { id: 3, name: "Charlie Brown", email: "charlie@web.com", phone: "+1 555-0103", city: "Texas", joined: "2025-01-10", orders: 0, spent: 0, status: "Blocked", img: "https://i.pravatar.cc/150?u=3" },
-            { id: 4, name: "Diana Prince", email: "diana@amazon.com", phone: "+1 555-0104", city: "Washington", joined: "2023-11-05", orders: 25, spent: 12500, status: "Active", img: "https://i.pravatar.cc/150?u=4" },
-            { id: 5, name: "Evan Wright", email: "evan@write.com", phone: "+1 555-0105", city: "Florida", joined: "2025-02-14", orders: 5, spent: 2100, status: "Active", img: "https://i.pravatar.cc/150?u=5" },
-        ];
+      // View Profile Modal
+      const profileModal = new bootstrap.Modal(
+        document.getElementById("profileModal")
+      );
 
-        // 2. Render Table
-        const tableBody = document.getElementById('customerTableBody');
+      // Reverted to standard static behavior
+      function viewProfile(customerId) {
+        
+        // Setting Static / Placeholder Data
+        document.getElementById("modalName").innerText = "Customer Details";
+        document.getElementById("modalEmail").innerText = "email@example.com";
+        document.getElementById("modalPhone").innerText = "N/A";
+        document.getElementById("modalJoin").innerText = "Date not available";
+        document.getElementById("modalOrdersCount").innerText = "0";
+        document.getElementById("modalSpent").innerText = "₹0.00";
 
-        function renderTable(data) {
-            tableBody.innerHTML = "";
-            let stats = { total: data.length, active: 0, vip: 0 };
+        // Reset Badge
+        const badge = document.getElementById("modalBadge");
+        badge.innerText = "Active";
+        badge.className = "badge bg-success mb-3";
 
-            data.forEach(c => {
-                // Calc Stats
-                if(c.status === "Active") stats.active++;
-                if(c.spent > 5000) stats.vip++; // VIP Threshold > $5000
+        profileModal.show();
+      }
 
-                // Badge Logic
-                let statusBadge = '';
-                if(c.status === 'Active') statusBadge = '<span class="badge badge-active">Active</span>';
-                else statusBadge = '<span class="badge badge-blocked">Blocked</span>';
-
-                // VIP Badge
-                let vipIcon = c.spent > 5000 ? '<i class="fas fa-crown text-warning ms-1" title="VIP Customer"></i>' : '';
-
-                let row = `
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <img src="${c.img}" class="avatar-img">
-                                <div>
-                                    <div class="fw-bold">${c.name} ${vipIcon}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="small">${c.email}</div>
-                            <div class="text-muted small">${c.phone}</div>
-                        </td>
-                        <td>${c.joined}</td>
-                        <td>${c.orders}</td>
-                        <td class="fw-bold text-success">$${c.spent.toLocaleString()}</td>
-                        <td>${statusBadge}</td>
-                        <td class="text-end">
-                            <button class="btn btn-sm btn-light border" onclick="viewProfile(${c.id})"><i class="fas fa-eye text-primary"></i></button>
-                            <button class="btn btn-sm btn-light border" onclick="deleteCustomer(${c.id})"><i class="fas fa-trash text-danger"></i></button>
-                        </td>
-                    </tr>
-                `;
-                tableBody.innerHTML += row;
-            });
-
-            // Update Stats Headers
-            document.getElementById('totalCust').innerText = stats.total;
-            document.getElementById('activeCust').innerText = stats.active;
-            document.getElementById('vipCust').innerText = stats.vip;
+      // Delete Function
+      function deleteCustomer(customerId) {
+        if (confirm("Are you sure you want to remove this customer?")) {
+          alert("Delete functionality would be implemented with AJAX call to backend.");
         }
+      }
 
-        // 3. Initial Load
-        renderTable(customers);
+      // Search Function
+      function searchCustomers() {
+        const val = document.getElementById("searchInput").value.toLowerCase();
+        const rows = document.querySelectorAll("#customerTableBody tr");
 
-        // 4. View Profile Modal
-        const profileModal = new bootstrap.Modal(document.getElementById('profileModal'));
+        rows.forEach((row) => {
+          const name = row.cells[0].textContent.toLowerCase();
+          const email = row.cells[1].textContent.toLowerCase();
+          if (name.includes(val) || email.includes(val)) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      }
 
-        function viewProfile(id) {
-            const c = customers.find(x => x.id === id);
+      // Filter Function
+      function filterCustomers() {
+        const status = document.getElementById("statusFilter").value;
+        const rows = document.querySelectorAll("#customerTableBody tr");
 
-            document.getElementById('modalImg').src = c.img;
-            document.getElementById('modalName').innerText = c.name;
-            document.getElementById('modalLoc').innerText = c.city;
-            document.getElementById('modalEmail').innerText = c.email;
-            document.getElementById('modalPhone').innerText = c.phone;
-            document.getElementById('modalJoin').innerText = c.joined;
-            document.getElementById('modalOrdersCount').innerText = c.orders;
-            document.getElementById('modalSpent').innerText = "$" + c.spent.toLocaleString();
-
-            // Status Badge in Modal
-            const badge = document.getElementById('modalBadge');
-            if(c.status === 'Active') {
-                badge.className = "badge bg-success mb-3";
-                badge.innerText = "Active Account";
-            } else {
-                badge.className = "badge bg-danger mb-3";
-                badge.innerText = "Account Blocked";
-            }
-
-            profileModal.show();
-        }
-
-        // 5. Delete Function
-        function deleteCustomer(id) {
-            if(confirm('Are you sure you want to remove this customer?')) {
-                customers = customers.filter(c => c.id !== id);
-                renderTable(customers);
-            }
-        }
-
-        // 6. Search Function
-        function searchCustomers() {
-            const val = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = customers.filter(c => 
-                c.name.toLowerCase().includes(val) || 
-                c.email.toLowerCase().includes(val)
-            );
-            renderTable(filtered);
-        }
-
-        // 7. Filter Function
-        function filterCustomers() {
-            const status = document.getElementById('statusFilter').value;
-            if(status === 'All') renderTable(customers);
-            else renderTable(customers.filter(c => c.status === status));
-        }
-
+        rows.forEach((row) => {
+          const rowStatus = row.cells[5].textContent.trim();
+          if (status === "All" || rowStatus === status) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      }
     </script>
-</body>
+  </body>
 </html>

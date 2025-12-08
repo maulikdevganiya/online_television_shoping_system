@@ -1,5 +1,4 @@
-{%load static%}
-
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -19,7 +18,11 @@
     <link rel="stylesheet" href="{% static 'Admin/css/admin_style.css' %}" />
   </head>
   <body>
-    {% include "admin_sidebar.html"%} {% include "admin_header.html"%}
+    {% csrf_token %}
+    
+    {% include "admin_sidebar.html" %} 
+    {% include "admin_header.html" %}
+    
     <div class="main-content">
       <h2 class="fw-bold mb-4">Financial Overview</h2>
 
@@ -27,7 +30,7 @@
         <div class="col-xl-3 col-md-6 mb-3">
           <div class="fin-card bg-gradient-1">
             <h6>Total Revenue</h6>
-            <h3>${{ total_revenue|floatformat:2 }}</h3>
+            <h3>&#8377; {{ total_revenue|floatformat:2 }}</h3>
             <div class="small text-white-50">
               <i class="fas fa-arrow-up"></i> Revenue from completed payments
             </div>
@@ -45,7 +48,7 @@
         <div class="col-xl-3 col-md-6 mb-3">
           <div class="fin-card bg-gradient-3">
             <h6>Refunds Processed</h6>
-            <h3>${{ refunded_amount|floatformat:2 }}</h3>
+            <h3>&#8377; {{ refunded_amount|floatformat:2 }}</h3>
             <div class="small text-white-50">Total refunded amount</div>
             <i class="fas fa-undo fin-icon"></i>
           </div>
@@ -96,7 +99,92 @@
                   <th class="text-end pe-4">Actions</th>
                 </tr>
               </thead>
-              <tbody id="transactionTableBody"></tbody>
+              <tbody id="transactionTableBody">
+                {% for payment in payments %}
+                <tr>
+                  <td class="ps-4">
+                    <div class="d-flex align-items-center">
+                      <div>
+                        <div class="fw-bold">
+                          {{ payment.transaction_id|default:"N/A" }}
+                        </div>
+                        <small class="text-muted"
+                          >Payment #{{ payment.id }}</small
+                        >
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="fw-bold">
+                      {{ payment.payment_date|date:"M d, Y" }}
+                    </div>
+                    <small class="text-muted"
+                      >{{ payment.payment_date|time:"H:i" }}</small
+                    >
+                  </td>
+                  <td>
+                    <div class="fw-bold">
+                      {{ payment.order.user.name }} {{ payment.order.user.last_name }}
+                    </div>
+                    <small class="text-muted"
+                      >{{ payment.order.user.email }}</small
+                    >
+                  </td>
+                  <td>
+                    <span class="fw-bold"
+                      >&#8377; {{ payment.amount|floatformat:2 }}</span
+                    >
+                  </td>
+                  <td>
+                    <span class="badge bg-light text-dark"
+                      >{{ payment.payment_method|title }}</span
+                    >
+                  </td>
+                  <td>
+                    {% if payment.payment_status == 'completed' %}
+                    <span class="badge bg-success">Completed</span>
+                    {% elif payment.payment_status == 'pending' %}
+                    <span class="badge bg-warning">Pending</span>
+                    {% elif payment.payment_status == 'failed' %}
+                    <span class="badge bg-danger">Failed</span>
+                    {% elif payment.payment_status == 'refunded' %}
+                    <span class="badge bg-secondary">Refunded</span>
+                    {% else %}
+                    <span class="badge bg-secondary"
+                      >{{ payment.payment_status|title }}</span
+                    >
+                    {% endif %}
+                  </td>
+                  <td class="text-end pe-4">
+                    <div class="btn-group">
+                      <button
+                        class="btn btn-sm btn-outline-primary"
+                        onclick="openReceipt({{ payment.id }}, '{{ payment.transaction_id|default:'N/A' }}', '{{ payment.payment_date|date:'M d, Y H:i' }}', '{{ payment.order.user.name }}{% if payment.order.user.last_name %} {{ payment.order.user.last_name }}{% endif %}', '{{ payment.amount|floatformat:2 }}', '{{ payment.payment_method|title }}', '{{ payment.payment_status|title }}', '{{ payment.order.order_number }}')"
+                      >
+                        <i class="fas fa-eye"></i>
+                      </button>
+                      {% if payment.payment_status == 'completed' %}
+                      <button
+                        class="btn btn-sm btn-outline-danger"
+                        onclick="issueRefund({{ payment.id }})"
+                      >
+                        <i class="fas fa-undo"></i>
+                      </button>
+                      {% endif %}
+                    </div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="7" class="text-center py-4">
+                    <div class="text-muted">
+                      <i class="fas fa-inbox fa-2x mb-2"></i>
+                      <p>No successful payments found</p>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
             </table>
           </div>
         </div>
@@ -176,7 +264,23 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-      let currentTxnId = null; // Store ID for modal actions
+      let currentTxnId = null; 
+
+      // 1. Helper Function to Get CSRF Token (Standard Django approach)
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+      }
 
       // Receipt Modal Logic
       const receiptModal = new bootstrap.Modal(
@@ -217,7 +321,7 @@
         // Update order reference link
         const orderLink = document.querySelector("#receiptModal a");
         orderLink.innerText = "#" + orderId;
-        orderLink.href = "#"; // You can update this to link to order details
+        orderLink.href = "#"; 
 
         // Refund Button Logic
         const btn = document.getElementById("btnRefund");
@@ -243,14 +347,12 @@
             "Are you sure you want to refund this transaction? This cannot be undone."
           )
         ) {
-          // Send AJAX request to update payment status
+          // 2. Updated Fetch to use getCookie for better security
           fetch(`/customadmin/refund-payment/${paymentId}/`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "X-CSRFToken":
-                document.querySelector("[name=csrfmiddlewaretoken]")?.value ||
-                "",
+              "X-CSRFToken": getCookie("csrftoken"), // uses the helper function
             },
           })
             .then((response) => response.json())
@@ -258,7 +360,7 @@
               if (data.success) {
                 receiptModal.hide();
                 alert("Refund processed successfully!");
-                location.reload(); // Refresh page to show updated data
+                location.reload(); 
               } else {
                 alert("Error: " + data.error);
               }
@@ -270,10 +372,9 @@
         }
       }
 
-      // Filter Function - Note: Since we're using Django templates, filtering is done server-side
+      // Filter Function
       function filterTransactions() {
         const status = document.getElementById("statusFilter").value;
-        // For now, we'll redirect with query parameter
         const url = new URL(window.location);
         if (status !== "All") {
           url.searchParams.set("status", status.toLowerCase());

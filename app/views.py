@@ -115,6 +115,57 @@ def add_to_cart(request, product_id):
 
     return redirect(request.META.get('HTTP_REFERER', 'index'))
 
+def buy_now(request, product_id):
+    if "user_id" not in request.session:
+        return redirect("login")
+
+    user = UserRegister.objects.get(id=request.session["user_id"])
+    product = get_object_or_404(Product, id=product_id)
+
+    # Get user's default address
+    default_address = Address.objects.filter(user=user, is_default=True).first()
+    if not default_address:
+        messages.error(request, "Please add a shipping address first.")
+        return redirect('my_address')
+
+    # Build shipping address
+    shipping_address = f"{default_address.full_name}, {default_address.address_line_1}"
+    if default_address.address_line_2:
+        shipping_address += f", {default_address.address_line_2}"
+    shipping_address += f", {default_address.city}, {default_address.state}, {default_address.pincode}"
+    phone = default_address.phone
+
+    # Create order
+    import uuid
+    order_number = str(uuid.uuid4())[:8].upper()
+    order = Order.objects.create(
+        user=user,
+        order_number=order_number,
+        total_amount=product.final_price,
+        shipping_address=shipping_address,
+        billing_address=shipping_address,
+        phone=phone,
+        email=user.email
+    )
+
+    # Create order item
+    OrderItem.objects.create(
+        order=order,
+        product=product,
+        quantity=1,
+        price=product.final_price
+    )
+
+    # Create payment (assuming cash on delivery for buy now)
+    Payment.objects.create(
+        order=order,
+        payment_method='cash_on_delivery',
+        payment_status='pending',
+        amount=product.final_price
+    )
+
+    return redirect('order_confirmation', order_id=order.id)
+
 def update_cart_quantity(request, item_id):
     if "user_id" not in request.session:
         return redirect("login")
@@ -487,3 +538,5 @@ def payment_cancel(request):
 
     messages.warning(request, "Payment cancelled.")
     return redirect('checkout')
+
+
